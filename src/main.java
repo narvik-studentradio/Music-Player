@@ -21,6 +21,7 @@
  */
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -34,21 +35,23 @@ import org.gstreamer.elements.PlayBin;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Properties;
 
 //Require commons-io-2.0.1, commons-logging-1.1.1, commons-codec-1.4 (i think...)
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
+//import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.filefilter.DirectoryFileFilter;
+//import org.apache.commons.io.filefilter.RegexFileFilter;
 //Require httpclient-4.1.1, httpclient-cache-4.1.1, httpcore-4.1, httpmime-4.1.1
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+//import org.apache.http.HttpEntity;
+//import org.apache.http.HttpResponse;
+//import org.apache.http.auth.AuthScope;
+//import org.apache.http.auth.UsernamePasswordCredentials;
+//import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.impl.client.DefaultHttpClient;
+//import org.apache.http.util.EntityUtils;
 
 public class main {
+
 	// init counters for playlist managment
 	static int PlayCount = 0;
 	static int PromoCount = 0;
@@ -57,12 +60,34 @@ public class main {
 	public static String Artist, Album, Title, Length;
 
 	public static void main(String[] args) {
-
+		Properties configFile = new Properties();	
+		
+		/*
+		 * Laster inn crawler.properties slik at vi slipper å ha login definert
+		 * i koden
+		 */
+		try {
+			configFile.load(new FileReader(new File("nsrmp.properties")));
+		} catch (IOException e) {
+			System.err.println("Klarte ikke å åpne nsrmp.properties, husk at denne filen må være i mappen java blir startet fra.");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		//Hvor mange icecast?
+		//while ()
+		
+		//La oss liste filer litt enklere måte å liste filer på
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles(new MyFilter()); 
+		
+		
+		
 		// Get Music from "current directory/Music", see getDir()
 		Collection<File> musicfiles = FileUtils.listFiles(new File(
 				getDir("Music")), new RegexFileFilter("^(.*?)"),
 				DirectoryFileFilter.DIRECTORY);
-		// Offload to Arraylist
+		// Offload to ArraylistFileUtils
 		Object[] MusicArray = musicfiles.toArray();
 		ArrayList<String> music = new ArrayList<String>();
 		for (int i = 0; i < MusicArray.length; i++) {
