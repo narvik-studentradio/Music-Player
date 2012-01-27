@@ -28,12 +28,18 @@ public class mdServer {
 		this.mount.add(mount);
 	}
 
-	public void update(String Artist, String Track, String Album, int seconds) {
+	public void update(String Artist, String Title, String Album, int seconds,
+			String type) {
 		for (String m : mount) {
+			String request = "?mount=" + m + "&mode=updinfo&song=" + Artist
+					+ " - " + Title + "&artist=" + Artist + "&title=" + Title
+					+ "&album=" + Album + "&duration=" + seconds + "&type="
+					+ type;
 			URL url = null;
 			try {
 				url = new URL("http" + (ssl ? "s" : "") + "://" + user + ";"
-						+ pass + "@" + hostname + ":" + port + "/" + m);
+						+ pass + "@" + hostname + ":" + port + "/"
+						+ "/admin/metadata" + request);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -54,6 +60,6 @@ public class mdServer {
 				e.printStackTrace();
 			}
 		}
+		System.gc();
 	}
-
 }

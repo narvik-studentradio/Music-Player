@@ -11,6 +11,7 @@ public class contentCollection {
 		this.path = path;
 		this.type = type;
 		scan();
+		shuffle();
 	}
 	
 	public void shuffle()
@@ -20,7 +21,7 @@ public class contentCollection {
 
 	public void scan() {
 		files = scan(new File(path));
-		
+		System.gc();
 		for(File f : files)
 		{
 			System.out.println(f.getPath());

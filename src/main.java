@@ -37,18 +37,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
-//Require commons-io-2.0.1, commons-logging-1.1.1, commons-codec-1.4 (i think...)
-//import org.apache.commons.io.FileUtils;
-//import org.apache.commons.io.filefilter.DirectoryFileFilter;
-//import org.apache.commons.io.filefilter.RegexFileFilter;
-//Require httpclient-4.1.1, httpclient-cache-4.1.1, httpcore-4.1, httpmime-4.1.1
-//import org.apache.http.HttpEntity;
-//import org.apache.http.HttpResponse;
-//import org.apache.http.auth.AuthScope;
-//import org.apache.http.auth.UsernamePasswordCredentials;
-//import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.impl.client.DefaultHttpClient;
-//import org.apache.http.util.EntityUtils;
 
 public class main {
 
@@ -69,8 +57,7 @@ public class main {
 		try {
 			configFile.load(new FileReader(new File("nsrmp.properties")));
 		} catch (IOException e) {
-			System.err
-					.println("Could not open nsrmp.properties. The file must be in the current working directory!");
+			System.err.println("Could not open nsrmp.properties. The file must be in the current working directory!");
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -103,35 +90,31 @@ public class main {
 			mdServerCounter++;
 		}
 
-		// La oss liste filer litt enklere måte å liste filer på
-		File folder = new File(path);
-		File[] listOfFiles = folder.listFiles(new MyFilter());
+		/*
+		 * An array with all the content cc
+		 */
+		ArrayList<contentCollection> contentCC = new ArrayList<contentCollection>();
 
-		// Get Music from "current directory/Music", see getDir()
-		Collection<File> musicfiles = FileUtils.listFiles(new File(
-				getDir("Music")), new RegexFileFilter("^(.*?)"),
-				DirectoryFileFilter.DIRECTORY);
-		// Offload to ArraylistFileUtils
-		Object[] MusicArray = musicfiles.toArray();
-		ArrayList<String> music = new ArrayList<String>();
-		for (int i = 0; i < MusicArray.length; i++) {
-			music.add(MusicArray[i].toString());
+		//Start with cc 0
+		int contentCCCounter = 0;
+		while ((configFile.getProperty("content" + contentCCCounter + "Location")) != null) {
+			contentCC.add(new contentCollection(configFile.getProperty("content" + mdServerCounter + "Location"),
+					configFile.getProperty("content" + mdServerCounter + "Type")));
+			contentCCCounter++;
 		}
-		// Shuffle the music
-		Collections.shuffle(music);
+		
+		/*
+		 * An array with all the spot cc
+		 */
+		ArrayList<contentCollection> spotCC = new ArrayList<contentCollection>();
 
-		// Get Music from "current directory/Promo", see getDir()
-		Collection<File> promofiles = FileUtils.listFiles(new File(
-				getDir("Promo")), new RegexFileFilter("^(.*?)"),
-				DirectoryFileFilter.DIRECTORY);
-		// Offload to Arraylist
-		Object[] PromoArray = promofiles.toArray();
-		ArrayList<String> promos = new ArrayList<String>();
-		for (int i = 0; i < PromoArray.length; i++) {
-			promos.add(PromoArray[i].toString());
+		//Start with cc 0
+		int spotCCCounter = 0;
+		while ((configFile.getProperty("content" + spotCCCounter + "Location")) != null) {
+			contentCC.add(new contentCollection(configFile.getProperty("content" + mdServerCounter + "Location"),
+					configFile.getProperty("content" + mdServerCounter + "Type")));
+			spotCCCounter++;
 		}
-		// Shuffle the promos
-		Collections.shuffle(promos);
 
 		// Basic gstreamer stuff
 		args = Gst.init("BusMessages", args);
@@ -208,14 +191,12 @@ public class main {
 
 						try {
 							// Update Icecast metadata with current track, see
-							// updateIcecast()
+							int duration = playbin.queryDuration().getSeconds() +
+									(playbin.queryDuration().getMinutes() * 60) +
+									(playbin.queryDuration().getHours() * 3600);
+							for (mdServer mds : mdServers)
+								mds.update(Artist, Title, Album, duration, type*);
 							String Song = Artist + " - " + Title;
-							updateIcecast("admin", "pass",
-									"stream.changeme.local", "8000",
-									"mount.mp3", Song);
-							updateIcecast("admin", "pass",
-									"stream.changeme.local", "8000",
-									"mount.ogg", Song);
 							System.out
 									.println("             ¨Updating Icecast¨");
 							System.out
@@ -300,35 +281,5 @@ public class main {
 			NewDir = NewDir + "/log.txt";
 		}
 		return NewDir;
-	}
-
-	public static void updateIcecast(String User, String Pass, String Server,
-			String Port, String Mount, String Track) throws Exception {
-		// The only client that worked with icecast was Apaces Default
-		// HttpClient
-		// Probably because i suck, or because apache rocks :)
-		String updateURL = "http://" + Server + ":" + Port
-				+ "/admin/metadata?mount=/" + Mount + "&mode=updinfo&song="
-				+ Track;
-		updateURL = updateURL.replaceAll(" ", "%20");
-
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			httpclient.getCredentialsProvider().setCredentials(
-					new AuthScope(Server, 8000),
-					new UsernamePasswordCredentials(User, Pass));
-
-			HttpGet httpget = new HttpGet(updateURL);
-			HttpResponse response = httpclient.execute(httpget);
-			HttpEntity entity = response.getEntity();
-			EntityUtils.consume(entity);
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
-			httpclient.getConnectionManager().shutdown();
-			// Hint the GC to start cleaning up!
-			System.gc();
-		}
 	}
 }
