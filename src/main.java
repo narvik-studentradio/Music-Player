@@ -60,8 +60,8 @@ public class main {
 	public static String Artist, Album, Title, Length;
 
 	public static void main(String[] args) {
-		Properties configFile = new Properties();	
-		
+		Properties configFile = new Properties();
+
 		/*
 		 * Laster inn crawler.properties slik at vi slipper å ha login definert
 		 * i koden
@@ -69,20 +69,44 @@ public class main {
 		try {
 			configFile.load(new FileReader(new File("nsrmp.properties")));
 		} catch (IOException e) {
-			System.err.println("Klarte ikke å åpne nsrmp.properties, husk at denne filen må være i mappen java blir startet fra.");
+			System.err
+					.println("Could not open nsrmp.properties. The file must be in the current working directory!");
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
-		//Hvor mange icecast?
-		//while ()
-		
-		//La oss liste filer litt enklere måte å liste filer på
+
+		/*
+		 * An array with all the metadata Servers
+		 */
+		ArrayList<mdServer> mdServers = new ArrayList<mdServer>();
+
+		//Start with Server 0
+		int mdServerCounter = 0;
+		while ((configFile.getProperty("icecastServer" + mdServerCounter)) != null) {
+			mdServers.add(
+				new mdServer(
+					Boolean.parseBoolean(configFile.getProperty("icecastServer" + mdServerCounter + "Ssl")),
+					configFile.getProperty("icecastServer" + mdServerCounter),
+					Integer.parseInt(configFile.getProperty("icecastServer"	+ mdServerCounter + "Port")),
+					configFile.getProperty("icecastServer" + mdServerCounter + "Mount0"),
+					configFile.getProperty("icecastServer" + mdServerCounter + "User"),
+					configFile.getProperty("icecastServer" + mdServerCounter + "Password")
+				)
+			);
+			//If there is more than 1 mount point
+			int mountCounter = 1;
+			while ((configFile.getProperty("icecastServer" + mdServerCounter + "Mount" + mountCounter)) != null){
+				mdServers.get(mdServerCounter).addMount(configFile.getProperty("icecastServer" + mdServerCounter
+									+ "Mount" + mountCounter));
+				mountCounter++;
+			}
+			mdServerCounter++;
+		}
+
+		// La oss liste filer litt enklere måte å liste filer på
 		File folder = new File(path);
-		File[] listOfFiles = folder.listFiles(new MyFilter()); 
-		
-		
-		
+		File[] listOfFiles = folder.listFiles(new MyFilter());
+
 		// Get Music from "current directory/Music", see getDir()
 		Collection<File> musicfiles = FileUtils.listFiles(new File(
 				getDir("Music")), new RegexFileFilter("^(.*?)"),
