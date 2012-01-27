@@ -191,9 +191,9 @@ public class main {
 
 						try {
 							// Update Icecast metadata with current track, see
-							int duration = playbin.queryDuration().getSeconds() +
+							int duration = (int) (playbin.queryDuration().getSeconds() +
 									(playbin.queryDuration().getMinutes() * 60) +
-									(playbin.queryDuration().getHours() * 3600);
+									(playbin.queryDuration().getHours() * 3600));
 							for (mdServer mds : mdServers)
 								mds.update(Artist, Title, Album, duration, type*);
 							String Song = Artist + " - " + Title;
