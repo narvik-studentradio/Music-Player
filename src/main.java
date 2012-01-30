@@ -44,11 +44,13 @@ public class main {
 	static int PlayCount = 0;
 	static int PromoCount = 0;
 	static int Promo = 0;
+	static ArrayList<mdServer> mdServers;
+	static Properties configFile;
 
-	public static String Artist, Album, Title, Length;
+	public static String Artist, Album, Title, Length, type;
 
 	public static void main(String[] args) {
-		Properties configFile = new Properties();
+		configFile = new Properties();
 
 		/*
 		 * Laster inn crawler.properties slik at vi slipper å ha login definert
@@ -65,7 +67,7 @@ public class main {
 		/*
 		 * An array with all the metadata Servers
 		 */
-		ArrayList<mdServer> mdServers = new ArrayList<mdServer>();
+		mdServers = new ArrayList<mdServer>();
 
 		//Start with Server 0
 		int mdServerCounter = 0;
@@ -91,30 +93,33 @@ public class main {
 		}
 
 		/*
-		 * An array with all the content cc
+		 * contentCollection with all the music
 		 */
-		ArrayList<contentCollection> contentCC = new ArrayList<contentCollection>();
+		contentCollection music = new contentCollection();
 
-		//Start with cc 0
-		int contentCCCounter = 0;
-		while ((configFile.getProperty("content" + contentCCCounter + "Location")) != null) {
-			contentCC.add(new contentCollection(configFile.getProperty("content" + mdServerCounter + "Location"),
-					configFile.getProperty("content" + mdServerCounter + "Type")));
-			contentCCCounter++;
+		//Start with musicType 0
+		int contentTypeCounter = 0;
+		while ((configFile.getProperty("content" + contentTypeCounter + "Location")) != null) {
+			music.scan(configFile.getProperty("content" + contentTypeCounter + "Location"),
+					configFile.getProperty("content" + contentTypeCounter + "Type"));
+			contentTypeCounter++;
 		}
+		music.shuffle();
 		
 		/*
-		 * An array with all the spot cc
+		 * contentCollection with all the spots
 		 */
-		ArrayList<contentCollection> spotCC = new ArrayList<contentCollection>();
+		contentCollection spots = new contentCollection();
 
-		//Start with cc 0
-		int spotCCCounter = 0;
-		while ((configFile.getProperty("content" + spotCCCounter + "Location")) != null) {
-			contentCC.add(new contentCollection(configFile.getProperty("content" + mdServerCounter + "Location"),
-					configFile.getProperty("content" + mdServerCounter + "Type")));
-			spotCCCounter++;
+		//Start with spotType 0
+		int spotTypeCounter = 0;
+		while ((configFile.getProperty("content" + spotTypeCounter + "Location")) != null) {
+			spots.scan(configFile.getProperty("content" + spotTypeCounter + "Location"),
+					configFile.getProperty("content" + spotTypeCounter + "Type"));
+			spotTypeCounter++;
 		}
+		spots.shuffle();
+		
 
 		// Basic gstreamer stuff
 		args = Gst.init("BusMessages", args);
@@ -172,14 +177,14 @@ public class main {
 						try {
 							// Prints to a logfile called log.txt, see getDir()
 							writer = new BufferedWriter(new FileWriter(
-									getDir("Log"), true));
+									configFile.getProperty("logDir"), true));
 
 							writer.write(CurrentDateTime + " - " + Artist
 									+ " - " + Album + " - " + Title + " - "
 									+ Length);
 							writer.newLine();
 							writer.close();
-							System.out.println("............." + getDir("Log")
+							System.out.println("............." + configFile.getProperty("logDir")
 									+ "..............");
 							System.out.println("        ....|"
 									+ CurrentDateTime + "|....");
@@ -195,7 +200,7 @@ public class main {
 									(playbin.queryDuration().getMinutes() * 60) +
 									(playbin.queryDuration().getHours() * 3600));
 							for (mdServer mds : mdServers)
-								mds.update(Artist, Title, Album, duration, type*);
+								mds.update(Artist, Title, Album, duration, type);
 							String Song = Artist + " - " + Title;
 							System.out
 									.println("             ¨Updating Icecast¨");
@@ -241,12 +246,12 @@ public class main {
 
 			if (PlayCount > music.size() - 1) {
 				PlayCount = 0;
-				Collections.shuffle(music);
+				music.shuffle();
 			}
 
 			if (Promo == 2) {
 				args = Gst.init("BusMessages", args);
-				playbin.setInputFile(new File(promos.get(PromoCount)));
+				playbin.setInputFile(new File(spots.get(PromoCount)));
 				playbin.setState(State.PLAYING);
 				Gst.main();
 				playbin.setState(State.NULL);
@@ -254,9 +259,9 @@ public class main {
 				PromoCount++;
 				Promo = 0;
 			}
-			if (PromoCount > promos.size() - 1) {
+			if (PromoCount > spots.size() - 1) {
 				PromoCount = 0;
-				Collections.shuffle(promos);
+				spots.shuffle();
 			}
 		}
 	}
@@ -266,20 +271,5 @@ public class main {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		return dateFormat.format(date);
-	}
-
-	public static String getDir(String dir) {
-		// Returns folders for current dir.
-		String NewDir = System.getProperty("user.dir");
-		if (dir == "Music") {
-			NewDir = NewDir + "/Music";
-		}
-		if (dir == "Promo") {
-			NewDir = NewDir + "/Promo";
-		}
-		if (dir == "Log") {
-			NewDir = NewDir + "/log.txt";
-		}
-		return NewDir;
 	}
 }

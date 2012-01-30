@@ -1,50 +1,49 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 public class contentCollection {
-	private String path, type;
-	private ArrayList<File> files;
+	private ArrayList<song> songs;
 	
-	public contentCollection(String path, String type)
+	public contentCollection()
 	{
-		this.path = path;
-		this.type = type;
-		scan();
-		shuffle();
 	}
 	
 	public void shuffle()
 	{
-		 Collections.shuffle(files);
+		 Collections.shuffle(songs);
 	}
 
-	public void scan() {
-		files = scan(new File(path));
+	public void scan(String location, String name) {
+		songs.addAll(scan(new File(location), name));
 		System.gc();
-		for(File f : files)
-		{
-			System.out.println(f.getPath());
-		}
-
 	}
 	
-	private ArrayList<File> scan(File path)
+	private Collection<? extends song> scan(File path, String typeName)
 	{
 		/*
 		 * Lets pork out on ArrayLists
 		 */
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<song> tempSongs = new ArrayList<song>();
 		File[] listOfFiles = path.listFiles();
 		
 	    for (int i = 0; i < listOfFiles.length; i++) {
 	        if (listOfFiles[i].isFile()) {
-	          files.add(listOfFiles[i]);
+	          tempSongs.add(new song(listOfFiles[i], typeName));
 	        } else if (listOfFiles[i].isDirectory()) {
-	          files.addAll(scan(listOfFiles[i]));
+	          tempSongs.addAll(scan(listOfFiles[i], typeName));
 	        }
 	      }
-		return files;
+		return tempSongs;
+	}
+
+	public String get(int playCount) {
+		return songs.get(playCount).toString();
+	}
+
+	public int size() {
+		return songs.size();
 	}
 
 }
