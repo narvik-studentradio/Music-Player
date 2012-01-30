@@ -100,7 +100,7 @@ public class main {
 		int contentTypeCounter = 0;
 		while ((configFile.getProperty("content" + contentTypeCounter + "Location")) != null) {
 			music.scan(configFile.getProperty("content" + contentTypeCounter + "Location"),
-					configFile.getProperty("content" + contentTypeCounter + "Type"));
+					configFile.getProperty("content" + contentTypeCounter + "Name"));
 			contentTypeCounter++;
 		}
 		music.shuffle();
@@ -114,7 +114,7 @@ public class main {
 		int spotTypeCounter = 0;
 		while ((configFile.getProperty("content" + spotTypeCounter + "Location")) != null) {
 			spots.scan(configFile.getProperty("content" + spotTypeCounter + "Location"),
-					configFile.getProperty("content" + spotTypeCounter + "Type"));
+					configFile.getProperty("content" + spotTypeCounter + "Name"));
 			spotTypeCounter++;
 		}
 		spots.shuffle();
