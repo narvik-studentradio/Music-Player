@@ -16,7 +16,7 @@ public class song {
 		return file;
 	}
 	
-	public String typeName()
+	public String getType()
 	{
 		return typeName;
 	}

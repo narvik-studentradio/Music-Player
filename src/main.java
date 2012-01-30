@@ -235,7 +235,9 @@ public class main {
 		// x-times, when list has ended, shuffle again and reset counter
 		while (true) {
 			args = Gst.init("BusMessages", args);
-			playbin.setInputFile(new File(music.get(PlayCount)));
+			playbin.setInputFile(new File(music.getFile(PlayCount)));
+			type = music.getType(PlayCount);
+//			playbin.setInputFile(new File(music.next());
 			playbin.setState(State.PLAYING);
 			Gst.main();
 			playbin.setState(State.NULL);
@@ -250,7 +252,8 @@ public class main {
 
 			if (Promo == 2) {
 				args = Gst.init("BusMessages", args);
-				playbin.setInputFile(new File(spots.get(PromoCount)));
+				playbin.setInputFile(new File(spots.getFile(PromoCount)));
+				type = spots.getType(PromoCount);
 				playbin.setState(State.PLAYING);
 				Gst.main();
 				playbin.setState(State.NULL);

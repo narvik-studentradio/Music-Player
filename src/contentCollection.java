@@ -8,6 +8,7 @@ public class contentCollection {
 	
 	public contentCollection()
 	{
+		songs = new ArrayList<song>();
 	}
 	
 	public void shuffle()
@@ -38,8 +39,12 @@ public class contentCollection {
 		return tempSongs;
 	}
 
-	public String get(int playCount) {
-		return songs.get(playCount).toString();
+	public String getFile(int playCount) {
+		return songs.get(playCount).getFile().toString();
+	}
+	
+	public String getType(int playCount) {
+		return songs.get(playCount).getType().toString();
 	}
 
 	public int size() {
