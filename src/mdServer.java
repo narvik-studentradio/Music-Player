@@ -1,9 +1,11 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.net.URLEncoder;
 
 public class mdServer {
 	private boolean ssl;
@@ -30,9 +32,22 @@ public class mdServer {
 
 	public void update(String Artist, String Title, String Album, int seconds,
 			String type) {
+		/*
+		 * URLencode all input data
+		 */
+		try {
+			Artist = URLEncoder.encode(Artist, "UTF-8");
+			Title = URLEncoder.encode(Title, "UTF-8");
+			Album = URLEncoder.encode(Album, "UTF-8");
+			type = URLEncoder.encode(type, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		for (String m : mount) {
 			String request = "?mount=" + m + "&mode=updinfo&song=" + Artist
-					+ " - " + Title + "&artist=" + Artist + "&title=" + Title
+					+ "+-+" + Title + "&artist=" + Artist + "&title=" + Title
 					+ "&album=" + Album + "&duration=" + seconds + "&type="
 					+ type;
 			URL url = null;
