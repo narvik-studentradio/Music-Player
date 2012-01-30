@@ -53,8 +53,7 @@ public class main {
 		configFile = new Properties();
 
 		/*
-		 * Laster inn crawler.properties slik at vi slipper å ha login definert
-		 * i koden
+		 * Laster inn crawler.properties slik at vi slipper ha alt hardkodet
 		 */
 		try {
 			configFile.load(new FileReader(new File("nsrmp.properties")));
