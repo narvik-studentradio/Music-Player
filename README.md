@@ -1,4 +1,4 @@
-# nsr-mp, simple playlist shuffler
+# nsr-mp, Narvik Student Radio Music Player
 A project to make a radio music player based on gstreamer-java to play music and spots.
 
 This is an IDLE radio player, its meant to play music, radiospots, update icecast while the radio staff does NOTHING.
