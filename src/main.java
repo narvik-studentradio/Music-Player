@@ -1,24 +1,27 @@
-/*  
-	This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of nsr-mp.
+ * 
+ * nsr-mp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * nsr-mp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with nsr-mp.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
- Import Nirvana, i used eclipse to manage all the .jar's i needed.
- Might be major bugs inside this god-au-full code, but hey, it atleast has comments :)
- To get it to work you need to change the icecast credentials under playing, or comment it out.
- Nice reminder, i exported it to a runnable jar to package all the required jars.
+ * Import Nirvana, i used eclipse to manage all the .jar's i needed.
+ * Might be major bugs inside this god-au-full code, but hey, it atleast has comments :)
+ * To get it to work you need to change the icecast credentials under playing, or comment it out.
+ * Nice reminder, i exported it to a runnable jar to package all the required jars.
  */
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -32,8 +35,6 @@ import java.util.ArrayList;
 import org.gstreamer.*;
 import org.gstreamer.elements.PlayBin;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
