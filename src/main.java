@@ -129,6 +129,7 @@ public class main {
 			public void endOfStream(GstObject source) {
 				// Debug
 				// System.out.println("Finished playing file");
+				Artist = Album = Title = null;
 				Gst.quit();
 			}
 		});
@@ -220,7 +221,7 @@ public class main {
 		// Gets current tags of the files
 		playbin.getBus().connect(new Bus.TAG() {
 			public void tagsFound(GstObject source, TagList tagList) {
-				for (String tagName : tagList.getTagNames()) {
+				for (String tagName : tagList.getTagNames()) {	
 					if (tagName.equalsIgnoreCase("artist")) {
 						Artist = (String) tagList.getValues(tagName).get(0);
 					} else if (tagName.equalsIgnoreCase("album")) {
@@ -250,7 +251,7 @@ public class main {
 				music.shuffle();
 			}
 
-			if (Promo == 2) {
+			if (Promo == Integer.parseInt(configFile.getProperty("contentNo"))) {
 				args = Gst.init("BusMessages", args);
 				playbin.setInputFile(new File(spots.getFile(PromoCount)));
 				type = spots.getType(PromoCount);
