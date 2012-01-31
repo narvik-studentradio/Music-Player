@@ -7,9 +7,9 @@ The Radio Music Machine For Lazy Student Radio Members
 
 ## Installation
 1. Place nsr-mp.jar in a sutable folder
-1. Copy nsrmp.example.properties to the same folder and name nsrmp.properties
-1. Modefy nsrmp.properties to sute your needs
-1. Lounch the application with 
+1. Copy nsrmp.example.properties to the same folder and rename it nsrmp.properties
+1. Modefy nsrmp.properties to suit your needs
+1. Launch the application with "java -jar nsr-mp.jar"
 
 ## Requirements
 - Java 1.6
@@ -25,7 +25,10 @@ except for the  external libraries listed below.
 * [jna-3.2.4](http://code.google.com/p/gstreamer-java/) (included)
 
 # Authors
-Versjon 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)
+Versjon 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)  
 Versjon 0.1 - 2011 - [Viktor Basso](http://basso.cc)
 
 For [Narvik Studentradio](http://nsr.samfunnet.no)
+
+## Thanks to
+Christoffer M&uuml;ller Nordeng for reviewing the code and offering design assistance.

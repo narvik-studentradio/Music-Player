@@ -37,7 +37,7 @@ public class mdServer {
 		/*
 		 * Lets prevent null's
 		 */
-		
+
 		if (Artist == null)
 			Artist = "Ukjent";
 		if (Title == null)
@@ -46,7 +46,7 @@ public class mdServer {
 			Album = "Ukjent";
 		if (type == null)
 			type = "Ukjent";
-		
+
 		/*
 		 * URLencode all input data
 		 */
@@ -59,21 +59,21 @@ public class mdServer {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		for (String m : mount) {
-			String request = "?mount=" + m + "&mode=updinfo&song=" + Artist
-					+ "+-+" + Title + "&artist=" + Artist + "&title=" + Title
+			String request = "?mount=" + m
+					+ "&mode=updinfo&charset=UTF-8&song=" + Artist + "+-+"
+					+ Title + "&artist=" + Artist + "&title=" + Title
 					+ "&album=" + Album + "&duration=" + seconds + "&type="
 					+ type;
 			URL url = null;
 			try {
 				Authenticator.setDefault(new Authenticator() {
-				    @Override
-				    protected PasswordAuthentication getPasswordAuthentication() {
-				        return new PasswordAuthentication(
-				            user,
-				            pass.toCharArray());
-				    }
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(user, pass
+								.toCharArray());
+					}
 				});
 				url = new URL("http" + (ssl ? "s" : "") + "://" + hostname
 						+ ":" + port + "/admin/metadata" + request);

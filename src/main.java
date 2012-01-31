@@ -113,9 +113,9 @@ public class main {
 
 		//Start with spotType 0
 		int spotTypeCounter = 0;
-		while ((configFile.getProperty("content" + spotTypeCounter + "Location")) != null) {
-			spots.scan(configFile.getProperty("content" + spotTypeCounter + "Location"),
-					configFile.getProperty("content" + spotTypeCounter + "Name"));
+		while ((configFile.getProperty("spot" + spotTypeCounter + "Location")) != null) {
+			spots.scan(configFile.getProperty("spot" + spotTypeCounter + "Location"),
+					configFile.getProperty("spot" + spotTypeCounter + "Name"));
 			spotTypeCounter++;
 		}
 		spots.shuffle();
