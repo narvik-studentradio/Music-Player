@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.net.URLEncoder;
@@ -33,6 +35,19 @@ public class mdServer {
 	public void update(String Artist, String Title, String Album, int seconds,
 			String type) {
 		/*
+		 * Lets prevent null's
+		 */
+		
+		if (Artist == null)
+			Artist = "Ukjent";
+		if (Title == null)
+			Title = "Ukjent";
+		if (Album == null)
+			Album = "Ukjent";
+		if (type == null)
+			type = "Ukjent";
+		
+		/*
 		 * URLencode all input data
 		 */
 		try {
@@ -52,9 +67,16 @@ public class mdServer {
 					+ type;
 			URL url = null;
 			try {
-				url = new URL("http" + (ssl ? "s" : "") + "://" + user + ";"
-						+ pass + "@" + hostname + ":" + port + "/"
-						+ "/admin/metadata" + request);
+				Authenticator.setDefault(new Authenticator() {
+				    @Override
+				    protected PasswordAuthentication getPasswordAuthentication() {
+				        return new PasswordAuthentication(
+				            user,
+				            pass.toCharArray());
+				    }
+				});
+				url = new URL("http" + (ssl ? "s" : "") + "://" + hostname
+						+ ":" + port + "/admin/metadata" + request);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

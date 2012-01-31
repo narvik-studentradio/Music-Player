@@ -211,6 +211,7 @@ public class main {
 									.println("        ¨¨Problems Updating Icecast¨¨");
 							System.out
 									.println("          ¨¨¨¨¨¨¨¨¨¨¨¨§¨¨¨¨¨¨¨¨¨¨¨¨");
+							e.printStackTrace();
 						}
 					}
 				}
@@ -237,7 +238,6 @@ public class main {
 			args = Gst.init("BusMessages", args);
 			playbin.setInputFile(new File(music.getFile(PlayCount)));
 			type = music.getType(PlayCount);
-//			playbin.setInputFile(new File(music.next());
 			playbin.setState(State.PLAYING);
 			Gst.main();
 			playbin.setState(State.NULL);
