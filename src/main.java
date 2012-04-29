@@ -45,10 +45,10 @@ public class main {
 	static int PlayCount = 0;
 	static int PromoCount = 0;
 	static int Promo = 0;
-	static ArrayList<mdServer> mdServers;
+	static ArrayList<MetadataServer> mdServers;
 	static Properties configFile;
 
-	public static String Artist, Album, Title, Length, type;
+	public static String artist, album, title, length, type;
 
 	public static void main(String[] args) {
 		configFile = new Properties();
@@ -67,13 +67,13 @@ public class main {
 		/*
 		 * An array with all the metadata Servers
 		 */
-		mdServers = new ArrayList<mdServer>();
+		mdServers = new ArrayList<MetadataServer>();
 
 		//Start with Server 0
 		int mdServerCounter = 0;
 		while ((configFile.getProperty("icecastServer" + mdServerCounter)) != null) {
 			mdServers.add(
-				new mdServer(
+				new MetadataServer(
 					Boolean.parseBoolean(configFile.getProperty("icecastServer" + mdServerCounter + "Ssl")),
 					configFile.getProperty("icecastServer" + mdServerCounter),
 					Integer.parseInt(configFile.getProperty("icecastServer"	+ mdServerCounter + "Port")),
@@ -95,7 +95,7 @@ public class main {
 		/*
 		 * contentCollection with all the music
 		 */
-		contentCollection music = new contentCollection();
+		ContentCollection music = new ContentCollection();
 
 		//Start with musicType 0
 		int contentTypeCounter = 0;
@@ -109,7 +109,7 @@ public class main {
 		/*
 		 * contentCollection with all the spots
 		 */
-		contentCollection spots = new contentCollection();
+		ContentCollection spots = new ContentCollection();
 
 		//Start with spotType 0
 		int spotTypeCounter = 0;
@@ -130,7 +130,7 @@ public class main {
 			public void endOfStream(GstObject source) {
 				// Debug
 				// System.out.println("Finished playing file");
-				Artist = Album = Title = null;
+				artist = album = title = null;
 				Gst.quit();
 			}
 		});
@@ -163,16 +163,16 @@ public class main {
 							Seconds = "" + playbin.queryDuration().getSeconds();
 						}
 						// Get Duration, date
-						Length = playbin.queryDuration().getMinutes() + ":"
+						length = playbin.queryDuration().getMinutes() + ":"
 								+ Seconds;
 						String CurrentDateTime = getDateTime();
 						// Displays Status of current song playing
 						System.out
 								.println("...................Playing....................");
-						System.out.println("Title: " + Title);
-						System.out.println("Artist: " + Artist);
-						System.out.println("Album: " + Album);
-						System.out.println("Length: " + Length);
+						System.out.println("Title: " + title);
+						System.out.println("Artist: " + artist);
+						System.out.println("Album: " + album);
+						System.out.println("Length: " + length);
 
 						BufferedWriter writer;
 						try {
@@ -180,9 +180,9 @@ public class main {
 							writer = new BufferedWriter(new FileWriter(
 									configFile.getProperty("logDir"), true));
 
-							writer.write(CurrentDateTime + " - " + Artist
-									+ " - " + Album + " - " + Title + " - "
-									+ Length);
+							writer.write(CurrentDateTime + " - " + artist
+									+ " - " + album + " - " + title + " - "
+									+ length);
 							writer.newLine();
 							writer.close();
 							System.out.println("............." + configFile.getProperty("logDir")
@@ -200,9 +200,9 @@ public class main {
 							int duration = (int) (playbin.queryDuration().getSeconds() +
 									(playbin.queryDuration().getMinutes() * 60) +
 									(playbin.queryDuration().getHours() * 3600));
-							for (mdServer mds : mdServers)
-								mds.update(Artist, Title, Album, duration, type);
-							String Song = Artist + " - " + Title;
+							for (MetadataServer mds : mdServers)
+								mds.update(artist, title, album, duration, type);
+							String Song = artist + " - " + title;
 							System.out
 									.println("             ¨Updating Icecast¨");
 							System.out
@@ -224,11 +224,11 @@ public class main {
 			public void tagsFound(GstObject source, TagList tagList) {
 				for (String tagName : tagList.getTagNames()) {	
 					if (tagName.equalsIgnoreCase("artist")) {
-						Artist = (String) tagList.getValues(tagName).get(0);
+						artist = (String) tagList.getValues(tagName).get(0);
 					} else if (tagName.equalsIgnoreCase("album")) {
-						Album = (String) tagList.getValues(tagName).get(0);
+						album = (String) tagList.getValues(tagName).get(0);
 					} else if (tagName.equalsIgnoreCase("title")) {
-						Title = (String) tagList.getValues(tagName).get(0);
+						title = (String) tagList.getValues(tagName).get(0);
 					}
 				}
 			}

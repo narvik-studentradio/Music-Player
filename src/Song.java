@@ -17,11 +17,11 @@
 
 import java.io.File;
 
-public class song {
+public class Song {
 	private File file;
 	private String typeName;
 	
-	public song (File file, String typeName)
+	public Song (File file, String typeName)
 	{
 		this.file = file;
 		this.typeName = typeName;

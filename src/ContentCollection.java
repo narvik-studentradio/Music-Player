@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class contentCollection {
-	private ArrayList<song> songs;
+public class ContentCollection {
+	private ArrayList<Song> songs;
 	
-	public contentCollection()
+	public ContentCollection()
 	{
-		songs = new ArrayList<song>();
+		songs = new ArrayList<Song>();
 	}
 	
 	public void shuffle()
@@ -38,17 +38,17 @@ public class contentCollection {
 		System.gc();
 	}
 	
-	private Collection<? extends song> scan(File path, String typeName)
+	private Collection<? extends Song> scan(File path, String typeName)
 	{
 		/*
 		 * Lets pork out on ArrayLists
 		 */
-		ArrayList<song> tempSongs = new ArrayList<song>();
+		ArrayList<Song> tempSongs = new ArrayList<Song>();
 		File[] listOfFiles = path.listFiles();
 		
 	    for (int i = 0; i < listOfFiles.length; i++) {
 	        if (listOfFiles[i].isFile()) {
-	          tempSongs.add(new song(listOfFiles[i], typeName));
+	          tempSongs.add(new Song(listOfFiles[i], typeName));
 	        } else if (listOfFiles[i].isDirectory()) {
 	          tempSongs.addAll(scan(listOfFiles[i], typeName));
 	        }

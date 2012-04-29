@@ -9,13 +9,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.net.URLEncoder;
 
-public class mdServer {
+public class MetadataServer {
 	private boolean ssl;
 	private String hostname, user, pass;
 	private int port;
 	private ArrayList<String> mount;
 
-	public mdServer(boolean ssl, String hostname, int port, String mount,
+	public MetadataServer(boolean ssl, String hostname, int port, String mount,
 			String user, String pass) {
 		// Create mount array
 		this.mount = new ArrayList<String>();
