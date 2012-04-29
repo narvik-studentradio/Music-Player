@@ -10,7 +10,7 @@ The Radio Music Machine For Lazy Student Radio Members
 1. Copy nsrmp.example.properties to the same folder and rename it nsrmp.properties
 1. Modefy nsrmp.properties to suit your needs
 1. Launch the application with "java -jar nsr-mp.jar"
-
+ 
 ## Requirements
 - Java 1.6
 - Linux based OS (or something that plays nice with gstreamer)
