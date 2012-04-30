@@ -23,6 +23,7 @@
  */
 
 import java.io.BufferedWriter;
+import java.io.Console;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,6 +38,7 @@ import org.gstreamer.elements.PlayBin;
 
 import java.util.Date;
 import java.util.Properties;
+import java.util.Scanner;
 
 
 public class main {
@@ -120,153 +122,13 @@ public class main {
 		}
 		spots.shuffle();
 		
-
-		// Basic gstreamer stuff
-		args = Gst.init("BusMessages", args);
-		final PlayBin playbin = new PlayBin("BusMessages");
-		playbin.setVideoSink(ElementFactory.make("fakesink", "videosink"));
-
-		playbin.getBus().connect(new Bus.EOS() {
-			public void endOfStream(GstObject source) {
-				// Debug
-				// System.out.println("Finished playing file");
-				artist = album = title = null;
-				Gst.quit();
-			}
-		});
-
-		playbin.getBus().connect(new Bus.ERROR() {
-			public void errorMessage(GstObject source, int code, String message) {
-				// Debug
-				// System.out.println("Error occurred: " + message);
-				Gst.quit();
-			}
-		});
-
-		playbin.getBus().connect(new Bus.STATE_CHANGED() {
-			public void stateChanged(GstObject source, State old,
-					State current, State pending) {
-				if (source == playbin) {
-					// Debug
-					// System.out.println("Pipeline state changed from " + old +
-					// " to " + current);
-
-					// The PLAYING LUMP, here we do alot of stuff when the music
-					// starts playing
-					if (current == State.PLAYING) {
-						String Seconds = null;
-						// Add a "0" to seconds, instead of 3:3, we get 3:30
-						if (playbin.queryDuration().getSeconds() < 10) {
-							Seconds = "0"
-									+ playbin.queryDuration().getSeconds();
-						} else {
-							Seconds = "" + playbin.queryDuration().getSeconds();
-						}
-						// Get Duration, date
-						length = playbin.queryDuration().getMinutes() + ":"
-								+ Seconds;
-						String CurrentDateTime = getDateTime();
-						// Displays Status of current song playing
-						System.out
-								.println("...................Playing....................");
-						System.out.println("Title: " + title);
-						System.out.println("Artist: " + artist);
-						System.out.println("Album: " + album);
-						System.out.println("Length: " + length);
-
-						BufferedWriter writer;
-						try {
-							// Prints to a logfile called log.txt, see getDir()
-							writer = new BufferedWriter(new FileWriter(
-									configFile.getProperty("logDir"), true));
-
-							writer.write(CurrentDateTime + " - " + artist
-									+ " - " + album + " - " + title + " - "
-									+ length);
-							writer.newLine();
-							writer.close();
-							System.out.println("............." + configFile.getProperty("logDir")
-									+ "..............");
-							System.out.println("        ....|"
-									+ CurrentDateTime + "|....");
-
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						try {
-							// Update Icecast metadata with current track, see
-							int duration = (int) (playbin.queryDuration().getSeconds() +
-									(playbin.queryDuration().getMinutes() * 60) +
-									(playbin.queryDuration().getHours() * 3600));
-							for (MetadataServer mds : mdServers)
-								mds.update(artist, title, album, duration, type);
-							String Song = artist + " - " + title;
-							System.out
-									.println("             ¨Updating Icecast¨");
-							System.out
-									.println("              ¨¨¨¨¨¨¨¨§¨¨¨¨¨¨¨");
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out
-									.println("        ¨¨Problems Updating Icecast¨¨");
-							System.out
-									.println("          ¨¨¨¨¨¨¨¨¨¨¨¨§¨¨¨¨¨¨¨¨¨¨¨¨");
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		// Gets current tags of the files
-		playbin.getBus().connect(new Bus.TAG() {
-			public void tagsFound(GstObject source, TagList tagList) {
-				for (String tagName : tagList.getTagNames()) {	
-					if (tagName.equalsIgnoreCase("artist")) {
-						artist = (String) tagList.getValues(tagName).get(0);
-					} else if (tagName.equalsIgnoreCase("album")) {
-						album = (String) tagList.getValues(tagName).get(0);
-					} else if (tagName.equalsIgnoreCase("title")) {
-						title = (String) tagList.getValues(tagName).get(0);
-					}
-				}
-			}
-		});
-
-		// Playloop, loads music from array, plays x-times++, play promo++ after
-		// x-times, when list has ended, shuffle again and reset counter
-		while (true) {
-			args = Gst.init("BusMessages", args);
-			playbin.setInputFile(new File(music.getFile(PlayCount)));
-			type = music.getType(PlayCount);
-			playbin.setState(State.PLAYING);
-			Gst.main();
-			playbin.setState(State.NULL);
-			Gst.deinit();
-			PlayCount++;
-			Promo++;
-
-			if (PlayCount > music.size() - 1) {
-				PlayCount = 0;
-				music.shuffle();
-			}
-
-			if (Promo == Integer.parseInt(configFile.getProperty("contentNo"))) {
-				args = Gst.init("BusMessages", args);
-				playbin.setInputFile(new File(spots.getFile(PromoCount)));
-				type = spots.getType(PromoCount);
-				playbin.setState(State.PLAYING);
-				Gst.main();
-				playbin.setState(State.NULL);
-				Gst.deinit();
-				PromoCount++;
-				Promo = 0;
-			}
-			if (PromoCount > spots.size() - 1) {
-				PromoCount = 0;
-				spots.shuffle();
-			}
+		Player player = new Player(music, spots, mdServers, configFile);
+		player.start();
+		
+		Scanner scan = new Scanner(System.in);
+		String command;
+		while(true) {
+			command = scan.nextLine();
 		}
 	}
 
