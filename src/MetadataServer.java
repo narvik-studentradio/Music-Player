@@ -32,18 +32,18 @@ public class MetadataServer {
 		this.mount.add(mount);
 	}
 
-	public void update(String Artist, String Title, String Album, int seconds,
+	public void update(String artist, String title, String album, int seconds,
 			String type) {
 		/*
 		 * Lets prevent null's
 		 */
 
-		if (Artist == null)
-			Artist = "Ukjent";
-		if (Title == null)
-			Title = "Ukjent";
-		if (Album == null)
-			Album = "Ukjent";
+		if (artist == null)
+			artist = "Ukjent";
+		if (title == null)
+			title = "Ukjent";
+		if (album == null)
+			album = "Ukjent";
 		if (type == null)
 			type = "Ukjent";
 
@@ -51,21 +51,47 @@ public class MetadataServer {
 		 * URLencode all input data
 		 */
 		try {
-			Artist = URLEncoder.encode(Artist, "UTF-8");
-			Title = URLEncoder.encode(Title, "UTF-8");
-			Album = URLEncoder.encode(Album, "UTF-8");
+			artist = URLEncoder.encode(artist, "UTF-8");
+			title = URLEncoder.encode(title, "UTF-8");
+			album = URLEncoder.encode(album, "UTF-8");
 			type = URLEncoder.encode(type, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		for (String m : mount) {
-			String request = "?mount=" + m
-					+ "&mode=updinfo&charset=UTF-8&song=" + Artist + "+-+"
-					+ Title + "&artist=" + Artist + "&title=" + Title
-					+ "&album=" + Album + "&duration=" + seconds + "&type="
-					+ type;
+		for (String m : mount)
+			new Updater(m, artist, title, album, seconds, type).start();
+		
+		System.gc();
+	}
+	
+	private class Updater extends Thread {
+		private String mount;
+		private String artist;
+		private String title;
+		private String album;
+		private int seconds;
+		private String type;
+		
+		public Updater(String mount, String artist, String title, String album,
+				int seconds, String type) {
+			super();
+			this.mount = mount;
+			this.artist = artist;
+			this.title = title;
+			this.album = album;
+			this.seconds = seconds;
+			this.type = type;
+		}
+		
+		@Override
+		public void run() {
+			String request = "?mount=" + mount
+			+ "&mode=updinfo&charset=UTF-8&song=" + artist + "+-+"
+			+ title + "&artist=" + artist + "&title=" + title
+			+ "&album=" + album + "&duration=" + seconds + "&type="
+			+ type;
 			URL url = null;
 			try {
 				Authenticator.setDefault(new Authenticator() {
@@ -81,7 +107,7 @@ public class MetadataServer {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		
 			/*
 			 * Reads and outputs content of url
 			 */
@@ -97,6 +123,5 @@ public class MetadataServer {
 				e.printStackTrace();
 			}
 		}
-		System.gc();
 	}
 }
