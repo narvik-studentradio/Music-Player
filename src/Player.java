@@ -1,12 +1,12 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.gstreamer.Bus;
 import org.gstreamer.ClockTime;
@@ -18,22 +18,28 @@ import org.gstreamer.elements.PlayBin2;
 
 
 public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHANGED, Bus.TAG {
+	private ContentManager content;
 	private ContentCollection music;
 	private ContentCollection spots;
 	private List<MetadataServer> mdServers;
-	private Properties properties;
+	private int songsPerSpot;
+	private String logDir;
 	private PlayBin2 playbin;
 	private String artist, album, title, length, type;
 	private int playCount = 0;
 	private int promoCount = 0;
 	private int promo = 0;
 	
-	public Player(ContentCollection music, ContentCollection spots, List<MetadataServer> mdServers, Properties properties) {
+	public Player() throws FileNotFoundException, IOException {
 		super();
-		this.music = music;
-		this.spots = spots;
-		this.mdServers = mdServers;
-		this.properties = properties;
+		PropertyParser parser = new PropertyParser();
+		
+		this.content = new ContentManager(parser);
+		this.music = parser.getMusic();
+		this.spots = parser.getSpots();
+		this.mdServers = parser.getMetadataServers();
+		this.songsPerSpot = parser.getSongsPerSpot();
+		this.logDir = parser.getLogDir();
 		
 		Gst.init("BusMessages", new String[]{});
 		playbin = new PlayBin2("BusMessages");
@@ -65,7 +71,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 				music.shuffle();
 			}
 
-			if (promo == Integer.parseInt(properties.getProperty("contentNo"))) {
+			if (promo == songsPerSpot) {
 				Gst.init("BusMessages", new String[]{});
 				playbin.setInputFile(new File(spots.getFile(promoCount)));
 				type = spots.getType(promoCount);
@@ -139,7 +145,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		String CurrentDateTime = getDateTime();
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(properties.getProperty("logDir"), true));
+			writer = new BufferedWriter(new FileWriter(logDir, true));
 
 			writer.write(CurrentDateTime + " - " + artist
 					+ " - " + album + " - " + title + " - "
@@ -147,7 +153,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 			writer.newLine();
 			writer.close();
 			
-			System.out.println("............." + properties.getProperty("logDir") + "..............");
+			System.out.println("............." + logDir + "..............");
 			System.out.println("        ....|" + CurrentDateTime + "|....");
 		}
 		catch(IOException e) {

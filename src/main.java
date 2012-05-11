@@ -22,22 +22,11 @@
  * Nice reminder, i exported it to a runnable jar to package all the required jars.
  */
 
-import java.io.BufferedWriter;
-import java.io.Console;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-//Require jna-3.2.4, gstreamer-java-1.4
-import org.gstreamer.*;
-import org.gstreamer.elements.PlayBin;
-
 import java.util.Date;
-import java.util.Properties;
 import java.util.Scanner;
 
 
@@ -48,86 +37,34 @@ public class main {
 	static int PromoCount = 0;
 	static int Promo = 0;
 	static ArrayList<MetadataServer> mdServers;
-	static Properties configFile;
 
 	public static String artist, album, title, length, type;
 
 	public static void main(String[] args) {
-		configFile = new Properties();
-
-		/*
-		 * Laster inn crawler.properties slik at vi slipper ha alt hardkodet
-		 */
+		Player player = null;
 		try {
-			configFile.load(new FileReader(new File("nsrmp.properties")));
-		} catch (IOException e) {
-			System.err.println("Could not open nsrmp.properties. The file must be in the current working directory!");
-			e.printStackTrace();
-			System.exit(0);
+			player = new Player();
+		} catch(IOException ex) {
+			System.out.println("Could not read config file.");
+			return;
 		}
-
-		/*
-		 * An array with all the metadata Servers
-		 */
-		mdServers = new ArrayList<MetadataServer>();
-
-		//Start with Server 0
-		int mdServerCounter = 0;
-		while ((configFile.getProperty("icecastServer" + mdServerCounter)) != null) {
-			mdServers.add(
-				new MetadataServer(
-					Boolean.parseBoolean(configFile.getProperty("icecastServer" + mdServerCounter + "Ssl")),
-					configFile.getProperty("icecastServer" + mdServerCounter),
-					Integer.parseInt(configFile.getProperty("icecastServer"	+ mdServerCounter + "Port")),
-					configFile.getProperty("icecastServer" + mdServerCounter + "Mount0"),
-					configFile.getProperty("icecastServer" + mdServerCounter + "User"),
-					configFile.getProperty("icecastServer" + mdServerCounter + "Password")
-				)
-			);
-			//If there is more than 1 mount point
-			int mountCounter = 1;
-			while ((configFile.getProperty("icecastServer" + mdServerCounter + "Mount" + mountCounter)) != null){
-				mdServers.get(mdServerCounter).addMount(configFile.getProperty("icecastServer" + mdServerCounter
-									+ "Mount" + mountCounter));
-				mountCounter++;
-			}
-			mdServerCounter++;
-		}
-
-		/*
-		 * contentCollection with all the music
-		 */
-		ContentCollection music = new ContentCollection();
-
-		//Start with musicType 0
-		int contentTypeCounter = 0;
-		while ((configFile.getProperty("content" + contentTypeCounter + "Location")) != null) {
-			music.scan(configFile.getProperty("content" + contentTypeCounter + "Location"),
-					configFile.getProperty("content" + contentTypeCounter + "Name"));
-			contentTypeCounter++;
-		}
-		music.shuffle();
-		
-		/*
-		 * contentCollection with all the spots
-		 */
-		ContentCollection spots = new ContentCollection();
-
-		//Start with spotType 0
-		int spotTypeCounter = 0;
-		while ((configFile.getProperty("spot" + spotTypeCounter + "Location")) != null) {
-			spots.scan(configFile.getProperty("spot" + spotTypeCounter + "Location"),
-					configFile.getProperty("spot" + spotTypeCounter + "Name"));
-			spotTypeCounter++;
-		}
-		spots.shuffle();
-		
-		Player player = new Player(music, spots, mdServers, configFile);
 		player.start();
 		
 		Scanner scan = new Scanner(System.in);
 		String command;
 		while(true) {
+			/* Commands:
+			 * 
+			 * help
+			 * rescan
+			 * start
+			 * stop (soft)
+			 * skip
+			 * metadata
+			 * streammode
+			 * playonce
+			 * 
+			 */
 			command = scan.nextLine();
 		}
 	}
