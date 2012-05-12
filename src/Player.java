@@ -19,26 +19,17 @@ import org.gstreamer.elements.PlayBin2;
 
 public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHANGED, Bus.TAG {
 	private ContentManager content;
-	private ContentCollection music;
-	private ContentCollection spots;
 	private List<MetadataServer> mdServers;
-	private int songsPerSpot;
 	private String logDir;
 	private PlayBin2 playbin;
 	private String artist, album, title, length, type;
-	private int playCount = 0;
-	private int promoCount = 0;
-	private int promo = 0;
 	
 	public Player() throws FileNotFoundException, IOException {
 		super();
 		PropertyParser parser = new PropertyParser();
 		
 		this.content = new ContentManager(parser);
-		this.music = parser.getMusic();
-		this.spots = parser.getSpots();
 		this.mdServers = parser.getMetadataServers();
-		this.songsPerSpot = parser.getSongsPerSpot();
 		this.logDir = parser.getLogDir();
 		
 		Gst.init("BusMessages", new String[]{});
@@ -53,39 +44,15 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 
 	@Override
 	public void run() {
-		// Playloop, loads music from array, plays x-times++, play promo++ after
-		// x-times, when list has ended, shuffle again and reset counter
+		// Playloop
 		while(true) {
 			Gst.init("BusMessages", new String[]{});
-			playbin.setInputFile(new File(music.getFile(playCount)));
-			type = music.getType(playCount);
+			playbin.setInputFile(new File(content.getNext()));
+			type = content.getType();
 			playbin.setState(org.gstreamer.State.PLAYING);
 			Gst.main();
 			playbin.setState(org.gstreamer.State.NULL);
 			Gst.deinit();
-			playCount++;
-			promo++;
-
-			if (playCount > music.size() - 1) {
-				playCount = 0;
-				music.shuffle();
-			}
-
-			if (promo == songsPerSpot) {
-				Gst.init("BusMessages", new String[]{});
-				playbin.setInputFile(new File(spots.getFile(promoCount)));
-				type = spots.getType(promoCount);
-				playbin.setState(org.gstreamer.State.PLAYING);
-				Gst.main();
-				playbin.setState(org.gstreamer.State.NULL);
-				Gst.deinit();
-				promoCount++;
-				promo = 0;
-			}
-			if (promoCount > spots.size() - 1) {
-				promoCount = 0;
-				spots.shuffle();
-			}
 		}
 	}
 	
@@ -117,6 +84,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		printPlaying();
 		printLog();
 		updateMetadata();
+		System.out.println(Thread.activeCount() + " active threads");
 	}
 
 	@Override
