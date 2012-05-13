@@ -1,16 +1,19 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 public class ContentManager {
 	private PropertyParser parser;
 	private ContentCollection music;
 	private ContentCollection spots;
+	private Object contentLock = new Object();
 	private int songsPerSpot;
 	private int songNr = 0;
 	private int spotNr = 0;
 	private int sinceSpot = 0;
 	private String type = "";
 	private FolderWatcher watcher;
+	private Object watcherLock = new Object();
 	
 	public ContentManager(PropertyParser propertyParser) {
 		this.parser = propertyParser;
@@ -26,36 +29,64 @@ public class ContentManager {
 		spots.shuffle();
 	}
 	
+	public boolean rescan() {
+		try {
+			parser.reload();
+		} catch (IOException e) {
+			return false;
+		}
+		synchronized(contentLock) {
+			this.music = parser.getMusic();
+			music.shuffle();
+			this.spots = parser.getSpots();
+			spots.shuffle();
+		}
+		this.songsPerSpot = parser.getSongsPerSpot();
+		synchronized(watcherLock) {
+			watcher.interrupt();
+			try {
+				this.watcher = new FolderWatcher(parser.getWatchFolder(), parser.getWatchExtensions());
+				watcher.start();
+			} catch (FileNotFoundException e) {
+			}
+		}
+		return true;
+	}
+	
 	public String getNext() {
 		//Check programs
-		if(watcher != null) {
-			String toPlay = watcher.toPlay();
-			if(toPlay != null)
-			{
-				type = "program";
-				return toPlay;
+		synchronized(watcherLock) {
+			if(watcher != null) {
+				String toPlay = watcher.toPlay();
+				if(toPlay != null)
+				{
+					type = "program";
+					return toPlay;
+				}
 			}
 		}
 		
-		if(spotNr >= spots.size()) {
-			spotNr = 0;
-			spots.shuffle();
-		}
-		if(songNr >= music.size()) {
-			songNr = 0;
-			music.shuffle();
-		}
-		if(sinceSpot >= songsPerSpot) {
-			//Play spot
-			sinceSpot = 0;
-			type = spots.getType(spotNr);
-			return spots.getFile(spotNr++);
-		}
-		else {
-			//Play song
-			sinceSpot++;
-			type = music.getType(songNr);
-			return music.getFile(songNr++);
+		synchronized(contentLock) {
+			if(spotNr >= spots.size()) {
+				spotNr = 0;
+				spots.shuffle();
+			}
+			if(songNr >= music.size()) {
+				songNr = 0;
+				music.shuffle();
+			}
+			if(sinceSpot >= songsPerSpot) {
+				//Play spot
+				sinceSpot = 0;
+				type = spots.getType(spotNr);
+				return spots.getFile(spotNr++);
+			}
+			else {
+				//Play song
+				sinceSpot++;
+				type = music.getType(songNr);
+				return music.getFile(songNr++);
+			}
 		}
 	}
 
@@ -63,11 +94,8 @@ public class ContentManager {
 		return type;
 	}
 	
-	@Override
-	protected void finalize() throws Throwable {
-		// Not sure if needed, but why not.
+	public void close() {
 		if(watcher != null)
 			watcher.interrupt();
-		super.finalize();
 	}
 }

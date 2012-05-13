@@ -18,15 +18,19 @@ import org.gstreamer.elements.PlayBin2;
 
 
 public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHANGED, Bus.TAG {
+	private PropertyParser parser;
 	private ContentManager content;
 	private List<MetadataServer> mdServers;
-	private String logDir;
+	private Object mdLock = new Object();
+	private volatile String logDir;
 	private PlayBin2 playbin;
 	private String artist, album, title, length, type;
+	private boolean quit = false;
+	public Shotgun shotgun = new Shotgun();
 	
 	public Player() throws FileNotFoundException, IOException {
 		super("Player");
-		PropertyParser parser = new PropertyParser();
+		parser = new PropertyParser();
 		
 		this.content = new ContentManager(parser);
 		this.mdServers = parser.getMetadataServers();
@@ -41,11 +45,25 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		bus.connect((Bus.STATE_CHANGED)this);
 		bus.connect((Bus.TAG)this);
 	}
+	
+	public boolean rescan() {
+		try {
+			parser.reload();
+		} catch (IOException e) {
+			return false;
+		}
+		content.rescan();
+		synchronized(mdLock) {
+			mdServers = parser.getMetadataServers();
+		}
+		logDir = parser.getLogDir();
+		return true;
+	}
 
 	@Override
 	public void run() {
 		// Playloop
-		while(true) {
+		while(!quit) {
 			Gst.init("BusMessages", new String[]{});
 			playbin.setInputFile(new File(content.getNext()));
 			type = content.getType();
@@ -54,6 +72,13 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 			playbin.setState(org.gstreamer.State.NULL);
 			Gst.deinit();
 		}
+	}
+	
+	public void quit() {
+		quit = true;
+		interrupt();
+		Gst.quit();
+		content.close();
 	}
 	
 	public void playOnceAt() {
@@ -81,10 +106,10 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		
 		long sec = playbin.queryDuration().getSeconds();
 		length = playbin.queryDuration().getMinutes() + ":" + (sec < 10 ? "0" : "") + sec;
-		printPlaying();
+		//printPlaying();
 		printLog();
 		updateMetadata();
-		System.out.println(Thread.activeCount() + " active threads");
+		//System.out.println(Thread.activeCount() + " active threads");
 	}
 
 	@Override
@@ -100,7 +125,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		}
 	}
 	
-	private void printPlaying() {
+	public void printPlaying() {
 		// Displays Status of current song playing
 		System.out.println("...................Playing....................");
 		System.out.println("Title: " + title);
@@ -120,9 +145,10 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 					+ length);
 			writer.newLine();
 			writer.close();
-			
+			/*
 			System.out.println("............." + logDir + "..............");
 			System.out.println("        ....|" + CurrentDateTime + "|....");
+			*/
 		}
 		catch(IOException e) {
 			return false;
@@ -136,10 +162,13 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		int duration = (int) (dur.getSeconds() +
 				(dur.getMinutes() * 60) +
 				(dur.getHours() * 3600));
-		for (MetadataServer mds : mdServers)
-			mds.update(artist, title, album, duration, type);
+		synchronized(mdLock) {
+			for (MetadataServer mds : mdServers)
+				mds.update(artist, title, album, duration, type);
+		}
+		/*
 		System.out.println("             ¨Updating Icecast¨");
-		System.out.println("              ¨¨¨¨¨¨¨¨§¨¨¨¨¨¨¨");
+		System.out.println("              ¨¨¨¨¨¨¨¨§¨¨¨¨¨¨¨");*/
 	}
 
 	private String getDateTime() {
@@ -147,5 +176,11 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		return dateFormat.format(date);
+	}
+	
+	public class Shotgun {
+		public void fire() {
+			quit();
+		}
 	}
 }

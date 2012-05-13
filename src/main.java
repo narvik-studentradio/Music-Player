@@ -51,7 +51,7 @@ public class main {
 		player.start();
 		
 		Scanner scan = new Scanner(System.in);
-		String command;
+		String[] command;
 		while(true) {
 			/* Commands:
 			 * 
@@ -63,10 +63,31 @@ public class main {
 			 * metadata
 			 * streammode
 			 * playonce
+			 * quit
 			 * 
 			 */
-			command = scan.nextLine();
+			command = scan.nextLine().split(" +?");
+			if(command.length == 0)
+				continue;
+			else if(command[0].equalsIgnoreCase("help"))
+				printHelp();
+			else if(command[0].equalsIgnoreCase("rescan")) {
+				if(player.rescan())
+					System.out.println("Properties and folders re-scanned");
+				else
+					System.out.println("Unable to re-scan");
+			}
+			else if(command[0].equalsIgnoreCase("quit")) {
+				break;
+			}
 		}
+		player.shotgun.fire();
+	}
+	
+	public static void printHelp() {
+		System.out.println("List of commands:");
+		System.out.println("rescan - rescan properties file and content folders");
+		System.out.println("quit - stop stuff");
 	}
 
 	public static String getDateTime() {

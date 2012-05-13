@@ -7,7 +7,7 @@ import java.util.Properties;
 
 
 public class PropertyParser {
-	private Properties properties;
+	private volatile Properties properties;
 	private String fileName = "nsrmp.properties"; 
 
 	public PropertyParser() throws FileNotFoundException, IOException {
