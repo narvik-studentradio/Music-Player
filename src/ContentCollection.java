@@ -33,12 +33,12 @@ public class ContentCollection {
 		 Collections.shuffle(songs);
 	}
 
-	public void scan(String location, String name) {
-		songs.addAll(scan(new File(location), name));
+	public void scan(String location, String name, String[] extensions) {
+		songs.addAll(scan(new File(location), name, extensions));
 		System.gc();
 	}
 	
-	private Collection<? extends Song> scan(File path, String typeName)
+	private Collection<? extends Song> scan(File path, String typeName, String[] extensions)
 	{
 		/*
 		 * Lets pork out on ArrayLists
@@ -50,7 +50,7 @@ public class ContentCollection {
 	        if (listOfFiles[i].isFile()) {
 	          tempSongs.add(new Song(listOfFiles[i], typeName));
 	        } else if (listOfFiles[i].isDirectory()) {
-	          tempSongs.addAll(scan(listOfFiles[i], typeName));
+	          tempSongs.addAll(scan(listOfFiles[i], typeName, extensions));
 	        }
 	      }
 		return tempSongs;

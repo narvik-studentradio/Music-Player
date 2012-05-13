@@ -12,14 +12,18 @@ public class FolderWatcher extends Thread {
 	private File watchFolder;
 	private List<ScheduledProgram> programs;
 	private List<ScheduledProgram> playedPrograms;
+	private String fileExtensions = "";
 
-	public FolderWatcher(String folder) throws FileNotFoundException {
+	public FolderWatcher(String folder, String[] extensions) throws FileNotFoundException {
 		super("Folder watcher");
 		this.watchFolder = new File(folder);
 		if(!watchFolder.isDirectory())
 			throw new FileNotFoundException("Folder not found");
+		for(int i=0; i<extensions.length; i++)
+			fileExtensions += (i > 0 ? "|" : "") + extensions[i];
 		this.programs = new ArrayList<ScheduledProgram>();
 		this.playedPrograms = new ArrayList<ScheduledProgram>();
+		setPriority(MIN_PRIORITY);
 	}
 
 	@Override
@@ -85,7 +89,7 @@ public class FolderWatcher extends Thread {
 			return new ArrayList<File>();
 		ArrayList<File> files = new ArrayList<File>();
 		for(File file : folder.listFiles()) {
-			if(file.isFile() && file.getName().matches("^\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(ogg|mp3|wav)$"))
+			if(file.isFile() && file.getName().matches("^\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(" + fileExtensions + ")$"))
 				files.add(file);
 			else if(file.isDirectory())
 				files.addAll(getFiles(file));

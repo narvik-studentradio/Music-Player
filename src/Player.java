@@ -25,7 +25,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	private String artist, album, title, length, type;
 	
 	public Player() throws FileNotFoundException, IOException {
-		super();
+		super("Player");
 		PropertyParser parser = new PropertyParser();
 		
 		this.content = new ContentManager(parser);

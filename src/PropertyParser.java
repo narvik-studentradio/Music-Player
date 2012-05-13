@@ -70,8 +70,10 @@ public class PropertyParser {
 		//Start with musicType 0
 		int contentTypeCounter = 0;
 		while ((properties.getProperty("content" + contentTypeCounter + "Location")) != null) {
+			String[] extensions = properties.getProperty("content" + contentTypeCounter + "FileType", "ogg/mp3/wav").split("/");
 			music.scan(properties.getProperty("content" + contentTypeCounter + "Location"),
-					properties.getProperty("content" + contentTypeCounter + "Name"));
+					properties.getProperty("content" + contentTypeCounter + "Name"),
+					extensions);
 			contentTypeCounter++;
 		}
 		//music.shuffle();
@@ -87,8 +89,10 @@ public class PropertyParser {
 		//Start with spotType 0
 		int spotTypeCounter = 0;
 		while ((properties.getProperty("spot" + spotTypeCounter + "Location")) != null) {
+			String[] extensions = properties.getProperty("content" + spotTypeCounter + "FileType", "ogg/mp3/wav").split("/");
 			spots.scan(properties.getProperty("spot" + spotTypeCounter + "Location"),
-					properties.getProperty("spot" + spotTypeCounter + "Name"));
+					properties.getProperty("spot" + spotTypeCounter + "Name"),
+					extensions);
 			spotTypeCounter++;
 		}
 		//spots.shuffle();
@@ -101,5 +105,13 @@ public class PropertyParser {
 	
 	public String getLogDir() {
 		return properties.getProperty("logDir");
+	}
+	
+	public String getWatchFolder() {
+		return properties.getProperty("watchLocation", "Watch");
+	}
+	
+	public String[] getWatchExtensions() {
+		return properties.getProperty("watchFileTypes", "ogg/mp3/wav").split("/");
 	}
 }

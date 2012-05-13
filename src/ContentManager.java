@@ -18,7 +18,7 @@ public class ContentManager {
 		this.spots = parser.getSpots();
 		this.songsPerSpot = parser.getSongsPerSpot();
 		try {
-			this.watcher = new FolderWatcher("Watch");//TODO: get from properties
+			this.watcher = new FolderWatcher(parser.getWatchFolder(), parser.getWatchExtensions());
 			watcher.start();
 		} catch (FileNotFoundException e) {
 		}
@@ -31,7 +31,10 @@ public class ContentManager {
 		if(watcher != null) {
 			String toPlay = watcher.toPlay();
 			if(toPlay != null)
+			{
+				type = "program";
 				return toPlay;
+			}
 		}
 		
 		if(spotNr >= spots.size()) {
