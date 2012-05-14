@@ -35,20 +35,24 @@ public class ContentManager {
 		} catch (IOException e) {
 			return false;
 		}
+		ContentCollection newMusic = parser.getMusic();
+		ContentCollection newSpots = parser.getSpots();
 		synchronized(contentLock) {
-			this.music = parser.getMusic();
+			this.music = newMusic;
 			music.shuffle();
-			this.spots = parser.getSpots();
+			this.spots = newSpots;
 			spots.shuffle();
 		}
 		this.songsPerSpot = parser.getSongsPerSpot();
-		synchronized(watcherLock) {
-			watcher.interrupt();
-			try {
-				this.watcher = new FolderWatcher(parser.getWatchFolder(), parser.getWatchExtensions());
-				watcher.start();
-			} catch (FileNotFoundException e) {
+		try {
+			FolderWatcher newWatcher = new FolderWatcher(parser.getWatchFolder(), parser.getWatchExtensions());
+			newWatcher.start();
+			synchronized(watcherLock) {
+				watcher.interrupt();
+				watcher = newWatcher;
 			}
+		} catch (FileNotFoundException e1) {
+			return false;
 		}
 		return true;
 	}
