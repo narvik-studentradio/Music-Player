@@ -57,7 +57,19 @@ public class ContentManager {
 		return true;
 	}
 	
-	public String getNext() {
+	public String getNext(PlayMode mode) {
+		if(mode == PlayMode.Music) {
+			synchronized(contentLock) {
+				if(songNr >= music.size()) {
+					songNr = 0;
+					music.shuffle();
+				}
+				//Play song
+				type = music.getType(songNr);
+				return music.getFile(songNr++);
+			}
+		}
+		
 		//Check programs
 		synchronized(watcherLock) {
 			if(watcher != null) {

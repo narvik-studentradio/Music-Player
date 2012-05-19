@@ -25,7 +25,10 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	private volatile String logDir;
 	private PlayBin2 playbin;
 	private String artist, album, title, length, type;
+	private boolean halt = false;
 	private boolean quit = false;
+	public PlayMode mode = PlayMode.Default;
+	
 	public Shotgun shotgun = new Shotgun();
 	
 	public Player() throws FileNotFoundException, IOException {
@@ -46,6 +49,25 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		bus.connect((Bus.TAG)this);
 	}
 	
+	public void skip() {
+		interrupt();
+	}
+	
+	public void pause() {
+		halt = true;
+	}
+	
+	public void play() {
+		halt = false;
+	}
+	
+	public void setMetadata(String artist, String title, String album) {
+		this.artist = artist;
+		this.title = title;
+		this.album = album;
+		updateMetadata();
+	}
+	
 	public boolean rescan() {
 		try {
 			parser.reload();
@@ -64,8 +86,9 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	public void run() {
 		// Playloop
 		while(!quit) {
+			while(halt);
 			Gst.init("BusMessages", new String[]{});
-			playbin.setInputFile(new File(content.getNext()));
+			playbin.setInputFile(new File(content.getNext(mode)));
 			type = content.getType();
 			playbin.setState(org.gstreamer.State.PLAYING);
 			Gst.main();
@@ -79,10 +102,6 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		interrupt();
 		Gst.quit();
 		content.close();
-	}
-	
-	public void playOnceAt() {
-		
 	}
 
 	@Override
