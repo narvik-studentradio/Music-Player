@@ -39,13 +39,13 @@ public class MetadataServer {
 		 */
 
 		if (artist == null)
-			artist = "Ukjent";
+			artist = "Unknown";
 		if (title == null)
-			title = "Ukjent";
+			title = "Unknown";
 		if (album == null)
-			album = "Ukjent";
+			album = "Unknown";
 		if (type == null)
-			type = "Ukjent";
+			type = "Unknown";
 
 		/*
 		 * URLencode all input data
