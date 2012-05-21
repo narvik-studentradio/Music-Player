@@ -38,21 +38,21 @@ public class PropertyParser {
 
 		//Start with Server 0
 		int mdServerCounter = 0;
-		while ((properties.getProperty("icecastServer" + mdServerCounter)) != null) {
+		while ((properties.getProperty("mdServer" + mdServerCounter)) != null) {
 			mdServers.add(
 				new MetadataServer(
-					Boolean.parseBoolean(properties.getProperty("icecastServer" + mdServerCounter + "Ssl")),
-					properties.getProperty("icecastServer" + mdServerCounter),
-					Integer.parseInt(properties.getProperty("icecastServer"	+ mdServerCounter + "Port")),
-					properties.getProperty("icecastServer" + mdServerCounter + "Mount0"),
-					properties.getProperty("icecastServer" + mdServerCounter + "User"),
-					properties.getProperty("icecastServer" + mdServerCounter + "Password")
+					Boolean.parseBoolean(properties.getProperty("mdServer" + mdServerCounter + "Ssl")),
+					properties.getProperty("mdServer" + mdServerCounter),
+					Integer.parseInt(properties.getProperty("mdServer"	+ mdServerCounter + "Port")),
+					properties.getProperty("mdServer" + mdServerCounter + "Mount0"),
+					properties.getProperty("mdServer" + mdServerCounter + "User"),
+					properties.getProperty("mdServer" + mdServerCounter + "Password")
 				)
 			);
 			//If there is more than 1 mount point
 			int mountCounter = 1;
-			while ((properties.getProperty("icecastServer" + mdServerCounter + "Mount" + mountCounter)) != null){
-				mdServers.get(mdServerCounter).addMount(properties.getProperty("icecastServer" + mdServerCounter
+			while ((properties.getProperty("mdServer" + mdServerCounter + "Mount" + mountCounter)) != null){
+				mdServers.get(mdServerCounter).addMount(properties.getProperty("mdServer" + mdServerCounter
 									+ "Mount" + mountCounter));
 				mountCounter++;
 			}
@@ -72,7 +72,7 @@ public class PropertyParser {
 		while ((properties.getProperty("content" + contentTypeCounter + "Location")) != null) {
 			String[] extensions = properties.getProperty("content" + contentTypeCounter + "FileType", "ogg/mp3/wav").split("/");
 			music.scan(properties.getProperty("content" + contentTypeCounter + "Location"),
-					properties.getProperty("content" + contentTypeCounter + "Name"),
+					properties.getProperty("content" + contentTypeCounter + "Type"),
 					extensions);
 			contentTypeCounter++;
 		}
@@ -91,7 +91,7 @@ public class PropertyParser {
 		while ((properties.getProperty("spot" + spotTypeCounter + "Location")) != null) {
 			String[] extensions = properties.getProperty("content" + spotTypeCounter + "FileType", "ogg/mp3/wav").split("/");
 			spots.scan(properties.getProperty("spot" + spotTypeCounter + "Location"),
-					properties.getProperty("spot" + spotTypeCounter + "Name"),
+					properties.getProperty("spot" + spotTypeCounter + "Type"),
 					extensions);
 			spotTypeCounter++;
 		}
@@ -100,7 +100,7 @@ public class PropertyParser {
 	}
 	
 	public int getSongsPerSpot() {
-		return Integer.parseInt(properties.getProperty("contentNo"));
+		return Integer.parseInt(properties.getProperty("contentPerSpot"));
 	}
 	
 	public String getLogDir() {
