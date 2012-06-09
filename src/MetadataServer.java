@@ -6,19 +6,23 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.ArrayList;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MetadataServer {
 	private boolean ssl;
 	private String hostname, user, pass;
 	private int port;
 	private ArrayList<String> mount;
+	private ExecutorService executor;
 
 	public MetadataServer(boolean ssl, String hostname, int port, String mount,
 			String user, String pass) {
 		// Create mount array
 		this.mount = new ArrayList<String>();
+		this.executor = Executors.newCachedThreadPool();
 
 		this.ssl = ssl;
 		this.hostname = hostname;
@@ -61,12 +65,12 @@ public class MetadataServer {
 		}
 
 		for (String m : mount)
-			new Updater(m, artist, title, album, seconds, type).start();
+			executor.execute(new Updater(m, artist, title, album, seconds, type));
 		
 		System.gc();
 	}
 	
-	private class Updater extends Thread {
+	private class Updater implements Runnable {
 		private String mount;
 		private String artist;
 		private String title;

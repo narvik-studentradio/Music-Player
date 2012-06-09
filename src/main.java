@@ -52,13 +52,16 @@ public class main {
 			 * start
 			 * stop (soft)
 			 * skip
+			 * quit
+			 * 
+			 * TODO:
 			 * metadata
 			 * playstream
 			 * 	should default to http://stream.sysrq.no:8000/01-greystream.ogg.m3u or
 			 * 	http://stream.sysrq.no:8000/01-greystream.ogg
 			 * 	The .m3u file consists of a "link" to the .ogg stream
 			 * playonce
-			 * quit
+			 * schedule
 			 * 
 			 */
 			command = scan.nextLine().split(" +?");
