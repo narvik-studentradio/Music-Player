@@ -89,7 +89,7 @@ public class PropertyParser {
 		//Start with spotType 0
 		int spotTypeCounter = 0;
 		while ((properties.getProperty("spot" + spotTypeCounter + "Location")) != null) {
-			String[] extensions = properties.getProperty("content" + spotTypeCounter + "FileType", "ogg/mp3/wav").split("/");
+			String[] extensions = properties.getProperty("spot" + spotTypeCounter + "FileType", "ogg/mp3/wav").split("/");
 			spots.scan(properties.getProperty("spot" + spotTypeCounter + "Location"),
 					properties.getProperty("spot" + spotTypeCounter + "Type"),
 					extensions);
