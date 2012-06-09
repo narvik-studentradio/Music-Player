@@ -100,7 +100,7 @@ public class PropertyParser {
 	}
 	
 	public int getSongsPerSpot() {
-		return Integer.parseInt(properties.getProperty("contentPerSpot"));
+		return Integer.parseInt(properties.getProperty("contentPerSpots"));
 	}
 	
 	public String getLogDir() {
