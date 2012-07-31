@@ -1,22 +1,28 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 
 
 public class ContentManager {
 	private PropertyParser parser;
 	private ContentCollection music;
 	private ContentCollection spots;
-	private Object contentLock = new Object();
+	private final Object contentLock = new Object();
 	private int songsPerSpot;
 	private int songNr = 0;
 	private int spotNr = 0;
 	private int sinceSpot = 0;
 	private String type = "";
 	private FolderWatcher watcher;
-	private Object watcherLock = new Object();
-	
+	private final Object watcherLock = new Object();
+	private final URI defaultStreamUri;
+	private URI streamUri = null;
+
 	public ContentManager(PropertyParser propertyParser) {
 		this.parser = propertyParser;
+		this.defaultStreamUri = parser.getStreamDefault();
+		this.streamUri = defaultStreamUri;
 		this.music = parser.getMusic();
 		this.spots = parser.getSpots();
 		this.songsPerSpot = parser.getSongsPerSpot();
@@ -57,7 +63,7 @@ public class ContentManager {
 		return true;
 	}
 	
-	public String getNext(PlayMode mode) {
+	public URI getNext(PlayMode mode) {
 		if(mode == PlayMode.Music) {
 			synchronized(contentLock) {
 				if(songNr >= music.size()) {
@@ -66,8 +72,16 @@ public class ContentManager {
 				}
 				//Play song
 				type = music.getType(songNr);
-				return music.getFile(songNr++);
+				return new File(music.getFile(songNr++)).toURI();
 			}
+		}
+		else if(mode == PlayMode.Stream) {
+			if(streamUri == null) {
+				System.err.println("No valid stream URI available");
+				return getNext(PlayMode.Music);
+			}
+			type = "Stream";
+			return streamUri;
 		}
 		
 		//Check programs
@@ -77,7 +91,7 @@ public class ContentManager {
 				if(toPlay != null)
 				{
 					type = "program";
-					return toPlay;
+					return new File(toPlay).toURI();
 				}
 			}
 		}
@@ -95,13 +109,13 @@ public class ContentManager {
 				//Play spot
 				sinceSpot = 0;
 				type = spots.getType(spotNr);
-				return spots.getFile(spotNr++);
+				return new File(spots.getFile(spotNr++)).toURI();
 			}
 			else {
 				//Play song
 				sinceSpot++;
 				type = music.getType(songNr);
-				return music.getFile(songNr++);
+				return new File(music.getFile(songNr++)).toURI();
 			}
 		}
 	}
@@ -113,5 +127,17 @@ public class ContentManager {
 	public void close() {
 		if(watcher != null)
 			watcher.interrupt();
+	}
+	
+	public URI getStreamUri() {
+		return streamUri;
+	}
+
+	public void setStreamUri(URI streamUri) {
+		this.streamUri = streamUri;
+	}
+	
+	public void resetStreamUri() {
+		streamUri = defaultStreamUri;
 	}
 }
