@@ -27,8 +27,8 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	private volatile String logDir;
 	private PlayBin2 playbin;
 	private String artist, album, title, length, type;
-	private boolean halt = false;
-	private boolean quit = false;
+	private volatile boolean halt = false;
+	private volatile boolean quit = false;
 	private final Set<ErrorListener> errorListeners = new HashSet<ErrorListener>();
 	public volatile PlayMode mode = PlayMode.Default;
 	
@@ -101,6 +101,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	}
 	
 	public void quit() {
+		halt = false;
 		quit = true;
 		interrupt();
 		Gst.quit();
