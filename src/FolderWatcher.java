@@ -66,17 +66,22 @@ public class FolderWatcher extends Thread {
 		ArrayList<ScheduledProgram> toPlay = new ArrayList<ScheduledProgram>();
 		Calendar now = GregorianCalendar.getInstance();
 		for (File file : files) {
-			String name = file.getName();
-			int year = Integer.parseInt(name.substring(0, 4));
-			int month = Integer.parseInt(name.substring(5, 7));
-			int day = Integer.parseInt(name.substring(8, 10));
-			int hour = Integer.parseInt(name.substring(11, 13));
-			int minute = Integer.parseInt(name.substring(14, 16));
-			Calendar cal = new GregorianCalendar(year, month, day, hour, minute);
-			ScheduledProgram shpr = new ScheduledProgram(cal, file);
-			if(cal.getTimeInMillis() - now.getTimeInMillis() > - SCAN_INTERVAL_MS
-					&& playedPrograms.contains(shpr))
-				toPlay.add(shpr);
+			try {
+				String name = file.getName();
+				int year = Integer.parseInt(name.substring(0, 4));
+				int month = Integer.parseInt(name.substring(5, 7)) - 1; //because java is stupid
+				int day = Integer.parseInt(name.substring(8, 10));
+				int hour = Integer.parseInt(name.substring(11, 13));
+				int minute = Integer.parseInt(name.substring(14, 16));
+				Calendar cal = new GregorianCalendar(year, month, day, hour, minute);
+				ScheduledProgram shpr = new ScheduledProgram(cal, file);
+				long diff = cal.getTimeInMillis() - now.getTimeInMillis();
+				if(cal.getTimeInMillis() - now.getTimeInMillis() > - SCAN_INTERVAL_MS
+						&& !playedPrograms.contains(shpr))
+					toPlay.add(shpr);
+			} catch(NumberFormatException e) {
+				continue;
+			}
 		}
 		synchronized(programs) {
 			programs.clear();
@@ -89,7 +94,7 @@ public class FolderWatcher extends Thread {
 			return new ArrayList<File>();
 		ArrayList<File> files = new ArrayList<File>();
 		for(File file : folder.listFiles()) {
-			if(file.isFile() && file.getName().matches("^\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(" + fileExtensions + ")$"))
+			if(file.isFile() && file.getName().matches("^.*\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(" + fileExtensions + ")$"))
 				files.add(file);
 			else if(file.isDirectory())
 				files.addAll(getFiles(file));
