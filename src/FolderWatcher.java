@@ -8,10 +8,10 @@ import java.util.List;
 
 public class FolderWatcher extends Thread {
 	private static final int SCAN_INTERVAL_MS = 10000;
+	private static final int MAX_PROGRAM_DELAY_MS = 1800000;
 	
 	private File watchFolder;
 	private List<ScheduledProgram> programs;
-	private List<ScheduledProgram> playedPrograms;
 	private String fileExtensions = "";
 
 	public FolderWatcher(String folder, String[] extensions) throws FileNotFoundException {
@@ -22,7 +22,6 @@ public class FolderWatcher extends Thread {
 		for(int i=0; i<extensions.length; i++)
 			fileExtensions += (i > 0 ? "|" : "") + extensions[i];
 		this.programs = new ArrayList<ScheduledProgram>();
-		this.playedPrograms = new ArrayList<ScheduledProgram>();
 		setPriority(MIN_PRIORITY);
 	}
 
@@ -50,9 +49,12 @@ public class FolderWatcher extends Thread {
 				}
 			}
 			if(toPlay != null) {
-				playedPrograms.add(toPlay);
 				programs.remove(toPlay);
-				return toPlay.file.toString();
+				String parent = toPlay.file.getParent();
+				String name = toPlay.file.getName();
+				String newName = parent + File.separator + "_" + name;
+				toPlay.file.renameTo(new File(newName));
+				return newName;
 			}
 		}
 		return null;
@@ -75,9 +77,7 @@ public class FolderWatcher extends Thread {
 				int minute = Integer.parseInt(name.substring(14, 16));
 				Calendar cal = new GregorianCalendar(year, month, day, hour, minute);
 				ScheduledProgram shpr = new ScheduledProgram(cal, file);
-				long diff = cal.getTimeInMillis() - now.getTimeInMillis();
-				if(cal.getTimeInMillis() - now.getTimeInMillis() > - SCAN_INTERVAL_MS
-						&& !playedPrograms.contains(shpr))
+				if(now.getTimeInMillis() - cal.getTimeInMillis() < MAX_PROGRAM_DELAY_MS)
 					toPlay.add(shpr);
 			} catch(NumberFormatException e) {
 				continue;
@@ -94,7 +94,7 @@ public class FolderWatcher extends Thread {
 			return new ArrayList<File>();
 		ArrayList<File> files = new ArrayList<File>();
 		for(File file : folder.listFiles()) {
-			if(file.isFile() && file.getName().matches("^.*\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(" + fileExtensions + ")$"))
+			if(file.isFile() && file.getName().matches("^[^_]*\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}\\.(" + fileExtensions + ")$"))
 				files.add(file);
 			else if(file.isDirectory())
 				files.addAll(getFiles(file));
