@@ -2,13 +2,10 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.gstreamer.Bus;
 import org.gstreamer.ClockTime;
@@ -29,7 +26,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	private String artist, album, title, length, type;
 	private volatile boolean halt = false;
 	private volatile boolean quit = false;
-	private final Set<ErrorListener> errorListeners = new HashSet<ErrorListener>();
+//	private final Set<ErrorListener> errorListeners = new HashSet<ErrorListener>();
 	public volatile PlayMode mode = PlayMode.Default;
 	
 	public Shotgun shotgun = new Shotgun();
@@ -108,13 +105,13 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		content.close();
 	}
 	
-	public void setStreamUri(URI streamUri) {
-		content.setStreamUri(streamUri);
-	}
-	
-	public URI getStreamUri() {
-		return content.getStreamUri();
-	}
+//	public void setStreamUri(URI streamUri) {
+//		content.setStreamUri(streamUri);
+//	}
+//	
+//	public URI getStreamUri() {
+//		return content.getStreamUri();
+//	}
 
 	@Override
 	public void endOfStream(GstObject source) {
@@ -125,11 +122,11 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	@Override
 	public void errorMessage(GstObject source, int code, String message) {
 		Gst.quit();
-		if(code == 3) {
-			content.resetStreamUri();
-			for(ErrorListener listener : errorListeners)
-				listener.onError(PlayerError.InvalidUri);
-		}
+//		if(code == 3) {
+//			content.resetStreamUri();
+//			for(ErrorListener listener : errorListeners)
+//				listener.onError(PlayerError.InvalidUri);
+//		}
 	}
 
 	@Override
@@ -220,19 +217,19 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		}
 	}
 	
-	public interface ErrorListener {
-		public void onError(PlayerError error);
-	}
-	
-	public enum PlayerError {
-		InvalidUri
-	}
-	
-	public boolean addErrorListener(ErrorListener listener) {
-		return errorListeners.add(listener);
-	}
-	
-	public boolean removeErrorListener(ErrorListener listener) {
-		return errorListeners.remove(listener);
-	}
+//	public interface ErrorListener {
+//		public void onError(PlayerError error);
+//	}
+//	
+//	public enum PlayerError {
+//		InvalidUri
+//	}
+//	
+//	public boolean addErrorListener(ErrorListener listener) {
+//		return errorListeners.add(listener);
+//	}
+//	
+//	public boolean removeErrorListener(ErrorListener listener) {
+//		return errorListeners.remove(listener);
+//	}
 }

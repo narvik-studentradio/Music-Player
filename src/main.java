@@ -22,11 +22,7 @@
  * Nice reminder, i exported it to a runnable jar to package all the required jars.
  */
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +31,7 @@ import java.util.Scanner;
 
 public class main {
 	private static Player player = null;
-	private static volatile boolean streamDeath = false;
+//	private static volatile boolean streamDeath = false;
 
 	public static void main(String[] args) {
 		try {
@@ -55,13 +51,13 @@ public class main {
 			 * playing
 			 * rescan
 			 * broadcast
-			 * playstream
 			 * start
 			 * stop (soft)
 			 * skip
 			 * quit
 			 * 
 			 * TODO:
+			 * playstream
 			 * metadata
 			 * playonce
 			 * schedule
@@ -107,72 +103,72 @@ public class main {
 			}
 			else if(command[0].equals("playing"))
 				player.printPlaying();
-			else if(command[0].equals("playstream")) {
-				streamLoop();
-			}
+//			else if(command[0].equals("playstream")) {
+//				streamLoop();
+//			}
 			else
 				System.out.println("Unknown command");
 		}
 		player.shotgun.fire();
 	}
 	
-	public static void streamLoop() {
-		final Scanner scan = new Scanner(System.in);
-		String command = "null";
-		System.out.println("***Entering stream mode***");
-		
-		URI uri = null;
-		while(true) {
-			System.out.print("Stream (" + player.getStreamUri().toString() + "): ");
-			command = scan.nextLine();
-			try {
-				uri = new URI(command);
-			} catch (URISyntaxException e) {
-				System.err.println("Invalid URI: " + e.getMessage());
-			}
-			
-			if(command.equals(""))
-				break;
-			if(uri != null) {
-				player.setStreamUri(uri);
-				break;
-			}
-		}
-		
-		streamDeath = false;
-		Player.ErrorListener errorListener = new Player.ErrorListener() {
-			@Override
-			public void onError(Player.PlayerError error) {
-				streamDeath = true;
-			}
-		};
-		player.addErrorListener(errorListener);
-		
-		player.play();
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		player.mode = PlayMode.Stream;
-		System.out.println("Stream mode enabled after current song, \"q\" to quit");
-		StreamLoop: do {
-			try {
-				while(!br.ready()) {
-					try { Thread.sleep(200); } catch (InterruptedException e) {}
-					if(streamDeath) {
-						System.err.println("***Stream error, resuming normal play***");
-						break StreamLoop;
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			command = scan.nextLine();
-		} while(!command.equals("q"));
-		
-		player.removeErrorListener(errorListener);
-		player.mode = PlayMode.Default;
-		player.skip();
-		System.out.println("***Stream mode ended***");
-	}
+//	public static void streamLoop() {
+//		final Scanner scan = new Scanner(System.in);
+//		String command = "null";
+//		System.out.println("***Entering stream mode***");
+//		
+//		URI uri = null;
+//		while(true) {
+//			System.out.print("Stream (" + player.getStreamUri().toString() + "): ");
+//			command = scan.nextLine();
+//			try {
+//				uri = new URI(command);
+//			} catch (URISyntaxException e) {
+//				System.err.println("Invalid URI: " + e.getMessage());
+//			}
+//			
+//			if(command.equals(""))
+//				break;
+//			if(uri != null) {
+//				player.setStreamUri(uri);
+//				break;
+//			}
+//		}
+//		
+//		streamDeath = false;
+//		Player.ErrorListener errorListener = new Player.ErrorListener() {
+//			@Override
+//			public void onError(Player.PlayerError error) {
+//				streamDeath = true;
+//			}
+//		};
+//		player.addErrorListener(errorListener);
+//		
+//		player.play();
+//		
+//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//		player.mode = PlayMode.Stream;
+//		System.out.println("Stream mode enabled after current song, \"q\" to quit");
+//		StreamLoop: do {
+//			try {
+//				while(!br.ready()) {
+//					try { Thread.sleep(200); } catch (InterruptedException e) {}
+//					if(streamDeath) {
+//						System.err.println("***Stream error, resuming normal play***");
+//						break StreamLoop;
+//					}
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			command = scan.nextLine();
+//		} while(!command.equals("q"));
+//		
+//		player.removeErrorListener(errorListener);
+//		player.mode = PlayMode.Default;
+//		player.skip();
+//		System.out.println("***Stream mode ended***");
+//	}
 	
 	public static void broadcastLoop() {
 		Scanner scan = new  Scanner(System.in);
@@ -220,7 +216,7 @@ public class main {
 		System.out.println("playing - print currently playing song");
 		System.out.println("rescan - rescan properties file and content folders");
 		System.out.println("broadcast - enter broadcast mode");
-		System.out.println("playstream - play a stream");
+//		System.out.println("playstream - play a stream");
 		System.out.println("skip - skip to next song, not advisable");
 		System.out.println("stop soft/hard - stop the player, after current song or immedeately");
 		System.out.println("start - start player after it has been stopped");

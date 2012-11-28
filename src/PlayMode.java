@@ -1,3 +1,3 @@
 public enum PlayMode {
-	Default, Music, Stream
+	Default, Music//, Stream
 }

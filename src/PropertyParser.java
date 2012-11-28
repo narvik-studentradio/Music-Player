@@ -2,8 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -117,13 +115,13 @@ public class PropertyParser {
 		return properties.getProperty("watchFileTypes", "ogg/mp3/wav").split("/");
 	}
 	
-	public URI getStreamDefault() {
-		URI uri = null;
-		try {
-			uri = new URI(properties.getProperty("streamDefault"));
-		} catch (URISyntaxException e) {
-			System.err.println("Invalid stream url: " + e.getMessage());
-		}
-		return uri;
-	}
+//	public URI getStreamDefault() {
+//		URI uri = null;
+//		try {
+//			uri = new URI(properties.getProperty("streamDefault"));
+//		} catch (URISyntaxException e) {
+//			System.err.println("Invalid stream url: " + e.getMessage());
+//		}
+//		return uri;
+//	}
 }

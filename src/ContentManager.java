@@ -16,13 +16,13 @@ public class ContentManager {
 	private String type = "";
 	private FolderWatcher watcher;
 	private final Object watcherLock = new Object();
-	private final URI defaultStreamUri;
-	private URI streamUri = null;
+//	private final URI defaultStreamUri;
+//	private URI streamUri = null;
 
 	public ContentManager(PropertyParser propertyParser) {
 		this.parser = propertyParser;
-		this.defaultStreamUri = parser.getStreamDefault();
-		this.streamUri = defaultStreamUri;
+//		this.defaultStreamUri = parser.getStreamDefault();
+//		this.streamUri = defaultStreamUri;
 		this.music = parser.getMusic();
 		this.spots = parser.getSpots();
 		this.songsPerSpot = parser.getSongsPerSpot();
@@ -75,14 +75,14 @@ public class ContentManager {
 				return new File(music.getFile(songNr++)).toURI();
 			}
 		}
-		else if(mode == PlayMode.Stream) {
-			if(streamUri == null) {
-				System.err.println("No valid stream URI available");
-				return getNext(PlayMode.Music);
-			}
-			type = "Stream";
-			return streamUri;
-		}
+//		else if(mode == PlayMode.Stream) {
+//			if(streamUri == null) {
+//				System.err.println("No valid stream URI available");
+//				return getNext(PlayMode.Music);
+//			}
+//			type = "Stream";
+//			return streamUri;
+//		}
 		
 		//Check programs
 		synchronized(watcherLock) {
@@ -129,15 +129,15 @@ public class ContentManager {
 			watcher.interrupt();
 	}
 	
-	public URI getStreamUri() {
-		return streamUri;
-	}
-
-	public void setStreamUri(URI streamUri) {
-		this.streamUri = streamUri;
-	}
-	
-	public void resetStreamUri() {
-		streamUri = defaultStreamUri;
-	}
+//	public URI getStreamUri() {
+//		return streamUri;
+//	}
+//
+//	public void setStreamUri(URI streamUri) {
+//		this.streamUri = streamUri;
+//	}
+//	
+//	public void resetStreamUri() {
+//		streamUri = defaultStreamUri;
+//	}
 }
