@@ -25,8 +25,9 @@ except for the  external libraries listed below.
 * [jna-3.2.4](http://code.google.com/p/gstreamer-java/) (included)
 
 # Authors
-Versjon 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)  
-Versjon 0.1 - 2011 - [Viktor Basso](http://basso.cc)
+Version 0.3 - 2013 - [Christoffer Nordeng]
+Version 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)  
+Version 0.1 - 2011 - [Viktor Basso](http://basso.cc)
 
 For [Narvik Studentradio](http://nsr.samfunnet.no)
 
