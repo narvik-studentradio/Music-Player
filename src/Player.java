@@ -211,6 +211,10 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 		return dateFormat.format(date);
 	}
 	
+	public PropertyParser getParser() {
+		return parser;
+	}
+
 	public class Shotgun {
 		public void fire() {
 			quit();

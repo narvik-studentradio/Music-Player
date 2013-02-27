@@ -103,6 +103,8 @@ public class main {
 			}
 			else if(command[0].equals("playing"))
 				player.printPlaying();
+			else if(command[0].equals("threads"))
+				System.out.println("Currently active threads: " + Thread.activeCount());
 //			else if(command[0].equals("playstream")) {
 //				streamLoop();
 //			}
@@ -174,20 +176,20 @@ public class main {
 		Scanner scan = new  Scanner(System.in);
 		String command = "";
 		System.out.println("***Entering boradcast mode***");
-		System.out.print("Artist (Narvik Studentradio): ");
+		System.out.print("Artist (" + player.getParser().getBroadcastArtist() + "): ");
 		command = scan.nextLine();
 		if(command.equals(""))
-			command = "Narvik Studentradio";
+			command = player.getParser().getBroadcastArtist();
 		String artist = command;
-		System.out.println("Title (Mandagssendingen): ");
+		System.out.print("Title (" + player.getParser().getBroadcastTitle() + "): ");
 		command = scan.nextLine();
 		if(command.equals(""))
-			command = "Mandagssendingen";
+			command = player.getParser().getBroadcastTitle();
 		String title = command;
-		System.out.println("Album (Live): ");
+		System.out.print("Album (" + player.getParser().getBroadcastAlbum() + "): ");
 		command = scan.nextLine();
 		if(command.equals(""))
-			command = "Live";
+			command = player.getParser().getBroadcastAlbum();
 		String album = command;
 		System.out.println("***Starting broadcast***");
 		

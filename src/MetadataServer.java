@@ -116,15 +116,22 @@ public class MetadataServer {
 			 * Reads and outputs content of url
 			 */
 			BufferedReader in = null;
-			String inputLine;
+//			String inputLine;
 			try {
 				in = new BufferedReader(new InputStreamReader(url.openStream()));
-				while ((inputLine = in.readLine()) != null)
-					System.out.println(inputLine);
+				while (in.readLine() != null);
+//					System.out.println(inputLine);
 				in.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if(in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

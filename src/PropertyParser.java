@@ -115,6 +115,18 @@ public class PropertyParser {
 		return properties.getProperty("watchFileTypes", "ogg/mp3/wav").split("/");
 	}
 	
+	public String getBroadcastArtist() {
+		return properties.getProperty("broadcastArtist", "Narvik Studentradio");
+	}
+	
+	public String getBroadcastTitle() {
+		return properties.getProperty("broadcastTitle", "Mandagssendingen");
+	}
+	
+	public String getBroadcastAlbum() {
+		return properties.getProperty("broadcastAlbum", "Live");
+	}
+	
 //	public URI getStreamDefault() {
 //		URI uri = null;
 //		try {
