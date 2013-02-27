@@ -25,7 +25,7 @@ except for the  external libraries listed below.
 * [jna-3.2.4](http://code.google.com/p/gstreamer-java/) (included)
 
 # Authors
-Version 0.3 - 2013 - [Christoffer Nordeng]
+Version 0.3 - 2013 - [Christoffer Nordeng](http://github.com/Jackstrom)
 Version 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)  
 Version 0.1 - 2011 - [Viktor Basso](http://basso.cc)
 
