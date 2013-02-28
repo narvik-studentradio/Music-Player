@@ -1,3 +1,4 @@
+package no.samfunnet.nsr.nsrmp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

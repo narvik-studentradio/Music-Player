@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<properties contentPerSpot="2"
+			log="log.txt"
+			spotType="spots"
+			watchType="watch"
+			broadcastArtist="Narvik Studentradio"
+			broadcastTitle="Mandagssendingen"
+			broadcastAlbum="Live">
+
+	<metadata>
+		<server>nsr-mb.samfunnet.no</server>
+		<port>80</port>
+		<user>user</user>
+		<password>pass</password>
+		<ssl>false</ssl>
+		<mount>nsr-mb</mount>
+	</metadata>
+	<metadata>
+		<server>stream.sysrq.no</server>
+		<port>8000</port>
+		<user>user</user>
+		<password>pass</password>
+		<ssl>false</ssl>
+		<mount>00-nsr.mp3</mount>
+		<mount>00-nsr.ogg</mount>
+		<mount>01-nsr-mobile.mp3</mount>
+		<mount>01-nsr-mobile.ogg</mount>
+	</metadata>
+
+	<content>
+		<location>jamendo</location>
+		<type>jamendo</type>
+		<filetype>ogg</filetype>
+		<filetype>mp3</filetype>
+		<filetype>wav</filetype>
+	</content>
+	<content>
+		<location>spots</location>
+		<type>spots</type>
+		<filetype>ogg</filetype>
+		<filetype>mp3</filetype>
+		<filetype>wav</filetype>
+	</content>
+	<content>
+		<location>watch</location>
+		<type>watch</type>
+		<filetype>ogg</filetype>
+		<filetype>mp3</filetype>
+		<filetype>wav</filetype>
+	</content>
+	
+</properties>

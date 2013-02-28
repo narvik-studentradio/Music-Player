@@ -1,3 +1,4 @@
+package no.samfunnet.nsr.nsrmp;
 /*
  * This file is part of nsr-mp.
  * 

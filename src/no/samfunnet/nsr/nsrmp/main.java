@@ -1,3 +1,4 @@
+package no.samfunnet.nsr.nsrmp;
 /*
  * This file is part of nsr-mp.
  * 
@@ -22,11 +23,12 @@
  * Nice reminder, i exported it to a runnable jar to package all the required jars.
  */
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+
+import javax.xml.bind.JAXBException;
 
 
 public class main {
@@ -36,7 +38,7 @@ public class main {
 	public static void main(String[] args) {
 		try {
 			player = new Player();
-		} catch(IOException ex) {
+		} catch(JAXBException ex) {
 			System.out.println("Could not read config file.");
 			return;
 		}
@@ -111,6 +113,7 @@ public class main {
 			else
 				System.out.println("Unknown command");
 		}
+		scan.close();
 		player.shotgun.fire();
 	}
 	

@@ -1,3 +1,4 @@
+package no.samfunnet.nsr.nsrmp;
 /*
  * This file is part of nsr-mp.
  * 
@@ -19,47 +20,46 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class ContentCollection {
 	private ArrayList<Song> songs;
-	
-	public ContentCollection()
-	{
+
+	public ContentCollection() {
 		songs = new ArrayList<Song>();
 	}
-	
-	public void shuffle()
-	{
-		 Collections.shuffle(songs);
+
+	public void shuffle() {
+		Collections.shuffle(songs);
 	}
 
-	public void scan(String location, String name, String[] extensions) {
+	public void scan(String location, String name, List<String> extensions) {
 		songs.addAll(scan(new File(location), name, extensions));
 		System.gc();
 	}
-	
-	private Collection<? extends Song> scan(File path, String typeName, String[] extensions)
-	{
+
+	private Collection<? extends Song> scan(File path, String typeName,
+			List<String> extensions) {
 		/*
 		 * Lets pork out on ArrayLists
 		 */
 		ArrayList<Song> tempSongs = new ArrayList<Song>();
 		File[] listOfFiles = path.listFiles();
-		
-	    for (int i = 0; i < listOfFiles.length; i++) {
-	        if (listOfFiles[i].isFile()) {
-	          tempSongs.add(new Song(listOfFiles[i], typeName));
-	        } else if (listOfFiles[i].isDirectory()) {
-	          tempSongs.addAll(scan(listOfFiles[i], typeName, extensions));
-	        }
-	      }
+
+		for(File f : listOfFiles) {
+			if (f.isFile() && extensions.contains(f.getName().substring(f.getName().lastIndexOf(".")+1))) {
+				tempSongs.add(new Song(f, typeName));
+			} else if (f.isDirectory()) {
+				tempSongs.addAll(scan(f, typeName, extensions));
+			}
+		}
 		return tempSongs;
 	}
 
 	public String getFile(int playCount) {
 		return songs.get(playCount).getFile().toString();
 	}
-	
+
 	public String getType(int playCount) {
 		return songs.get(playCount).getType().toString();
 	}

@@ -1,3 +1,4 @@
+package no.samfunnet.nsr.nsrmp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +9,7 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,19 +17,15 @@ public class MetadataServer {
 	private boolean ssl;
 	private String hostname, user, pass;
 	private int port;
-	private ArrayList<String> mount;
-	private ExecutorService executor;
+	private final List<String> mount = new ArrayList<String>();
+	private final ExecutorService executor = Executors.newCachedThreadPool();;
 
-	public MetadataServer(boolean ssl, String hostname, int port, String mount,
+	public MetadataServer(boolean ssl, String hostname, int port, List<String> mounts,
 			String user, String pass) {
-		// Create mount array
-		this.mount = new ArrayList<String>();
-		this.executor = Executors.newCachedThreadPool();
-
 		this.ssl = ssl;
 		this.hostname = hostname;
 		this.port = port;
-		this.mount.add(mount);
+		this.mount.addAll(mounts);
 		this.user = user;
 		this.pass = pass;
 	}

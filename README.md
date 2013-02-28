@@ -7,8 +7,8 @@ The Radio Music Machine For Lazy Student Radio Members
 
 ## Installation
 1. Place nsr-mp.jar in a sutable folder
-1. Copy nsrmp.example.properties to the same folder and rename it nsrmp.properties
-1. Modefy nsrmp.properties to suit your needs
+1. Copy properties.xml to the same folder
+1. Modify properties.xml to suit your needs
 1. Launch the application with "java -jar nsr-mp.jar"
  
 ## Requirements
@@ -30,6 +30,3 @@ Version 0.2 - 2012 - [Vegard Lang&aring;s](http://sjefen6.no)
 Version 0.1 - 2011 - [Viktor Basso](http://basso.cc)
 
 For [Narvik Studentradio](http://nsr.samfunnet.no)
-
-## Thanks to
-Christoffer M&uuml;ller Nordeng for reviewing the code and offering design assistance.

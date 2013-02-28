@@ -1,6 +1,6 @@
+package no.samfunnet.nsr.nsrmp;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URI;
 
 
@@ -36,11 +36,6 @@ public class ContentManager {
 	}
 	
 	public boolean rescan() {
-		try {
-			parser.reload();
-		} catch (IOException e) {
-			return false;
-		}
 		ContentCollection newMusic = parser.getMusic();
 		ContentCollection newSpots = parser.getSpots();
 		synchronized(contentLock) {

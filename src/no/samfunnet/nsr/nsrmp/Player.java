@@ -1,11 +1,13 @@
+package no.samfunnet.nsr.nsrmp;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import org.gstreamer.Bus;
 import org.gstreamer.ClockTime;
@@ -31,7 +33,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	
 	public Shotgun shotgun = new Shotgun();
 	
-	public Player() throws FileNotFoundException, IOException {
+	public Player() throws JAXBException {
 		super("Player");
 		parser = new PropertyParser();
 		
@@ -71,7 +73,7 @@ public class Player extends Thread implements Bus.EOS, Bus.ERROR, Bus.STATE_CHAN
 	public boolean rescan() {
 		try {
 			parser.reload();
-		} catch (IOException e) {
+		} catch (JAXBException e) {
 			return false;
 		}
 		content.rescan();
