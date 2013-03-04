@@ -1,6 +1,7 @@
 package no.samfunnet.nsr.nsrmp;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,7 +34,7 @@ public class PropertyParser {
 		properties = (XmlProperties) jaxbContext.createUnmarshaller().unmarshal(file);
 	}
 	
-	public ArrayList<MetadataServer> getMetadataServers() {
+	public List<MetadataServer> getMetadataServers() {
 		ArrayList<MetadataServer> mdServers = new ArrayList<MetadataServer>();
 
 		for(Metadata md : properties.metadata) {

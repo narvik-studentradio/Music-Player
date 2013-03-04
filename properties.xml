@@ -13,7 +13,7 @@
 		<user>user</user>
 		<password>pass</password>
 		<ssl>false</ssl>
-		<mount>nsr-mb</mount>
+		<mount>/nsr-mb</mount>
 	</metadata>
 	<metadata>
 		<server>stream.sysrq.no</server>
@@ -21,10 +21,10 @@
 		<user>user</user>
 		<password>pass</password>
 		<ssl>false</ssl>
-		<mount>00-nsr.mp3</mount>
-		<mount>00-nsr.ogg</mount>
-		<mount>01-nsr-mobile.mp3</mount>
-		<mount>01-nsr-mobile.ogg</mount>
+		<mount>/00-nsr.mp3</mount>
+		<mount>/00-nsr.ogg</mount>
+		<mount>/01-nsr-mobile.mp3</mount>
+		<mount>/01-nsr-mobile.ogg</mount>
 	</metadata>
 
 	<content>
