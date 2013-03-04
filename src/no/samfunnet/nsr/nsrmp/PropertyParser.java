@@ -80,7 +80,10 @@ public class PropertyParser {
 	}
 	
 	public String getWatchFolder() {
-		return "watch";
+		for(Content c : properties.content)
+			if(c.type.equals(properties.watchType))
+				return c.location;
+		return null;
 	}
 	
 	public String[] getWatchExtensions() {
