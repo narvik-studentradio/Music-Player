@@ -26,6 +26,7 @@ package no.samfunnet.nsr.nsrmp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.xml.bind.JAXBException;
@@ -65,7 +66,11 @@ public class main {
 			 * schedule
 			 * 
 			 */
-			command = scan.nextLine().split(" +?");
+			try {
+				command = scan.nextLine().split(" +?");
+			} catch(NoSuchElementException e) {
+				command = new String[]{};
+			}
 			if(command.length == 0)
 				continue;
 			else if(command[0].equalsIgnoreCase("help"))
