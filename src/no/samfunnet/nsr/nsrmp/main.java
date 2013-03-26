@@ -69,7 +69,8 @@ public class main {
 			try {
 				command = scan.nextLine().split(" +?");
 			} catch(NoSuchElementException e) {
-				command = new String[]{};
+				System.out.print("quit");
+				break;
 			}
 			if(command.length == 0)
 				continue;
